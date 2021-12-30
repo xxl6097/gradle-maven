@@ -1,0 +1,68 @@
+// 添加插件
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
+group = GROUP// groupId
+version = project.VERSION// 库的当前版本
+
+// 生成jar包的task
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+// 签名
+signing {
+    sign configurations.archives
+    //required { gradle.taskGraph.hasTask("uploadArchives") }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: RELEASEURL) {
+                authentication(userName: USERNAME, password: PASSWORD)
+            }
+
+            snapshotRepository(url: SNAPSHOTSURL) {
+                authentication(userName: USERNAME, password: PASSWORD)
+            }
+
+            pom.project {
+                name project.NAME// 项目名称
+                packaging 'aar'// 资源类型
+                artifactId project.NAME// 库名
+                description project.DESCRIPTION// 描述
+                url project.SRCURL
+
+                scm {
+                    connection project.CONNECTION
+                    developerConnection project.CONNECTION
+                    url project.SRCURL
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id AUTHOR_ID// 开发者账号
+                        name AUTHOR_NAME// 名字
+                        email AUTHOR_EMAIL// 邮箱
+                    }
+                }
+            }
+        }
+    }
+}

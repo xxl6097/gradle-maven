@@ -1,0 +1,3 @@
+//include ':gradle-maven'
+include ':java-library'
+include ':android-library'

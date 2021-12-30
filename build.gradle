@@ -1,0 +1,61 @@
+buildscript {
+    repositories {
+//        maven {
+//            url 'https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-snapshots/'
+//            credentials {
+//                username = 'tianliang.liu@clife.cn'
+//                password = '>8wexq44buLZBfA'
+//            }
+//        }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public'}
+        maven { url 'https://repo1.maven.org/maven2' }
+        maven { url 'https://maven.aliyun.com/repository/central'}
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.2'
+        //2.引用依赖库
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        
+    }
+}
+
+allprojects {
+    repositories {
+//        maven {
+//            url 'https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-snapshots/'
+//            credentials {
+//                username = 'tianliang.liu@clife.cn'
+//                password = '>8wexq44buLZBfA'
+//            }
+//        }
+
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public'}
+        maven { url 'https://repo1.maven.org/maven2' }
+        maven { url 'https://maven.aliyun.com/repository/central'}
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+
+ext {
+    android = [compileSdkVersion: 27,
+               buildToolsVersion: "27.0.3",
+               minSdkVersion    : 18,
+               targetSdkVersion : 27,
+               versionCode      : 2,
+               versionName      : "2.0"]
+
+    //第三方依赖库 com.umeng.analytics:analytics:latest.integration
+    thirddependencies = ["appcompat-v7"       : 'com.android.support:appcompat-v7:27.1.1',
+                         "gson"               : 'com.google.code.gson:gson:2.8.5'
+    ]
+
+}

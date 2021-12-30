@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+}
+
+version 'unspecified'
+
+repositories {
+    mavenCentral()
+}
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'com.java.test.Main'
+        )
+    }
+}
+//mainClassName = 'com.java.test.Main'
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+ext {
+    NAME = 'hetjavasdk'
+    //加上-SNAPSHOT 后缀就是发布快照版本,需要加SNAPSHOT的maven依赖
+    VERSION = '0.0.0'
+    //以下是非必填项
+    DESCRIPTION='A Library For Java'
+    SRCURL='https://github.com/szhittech/hetjavasdk'
+    CONNECTION='scm:git@github.com:szhittech/hetjavasdk.git'
+}
+
+apply from: '../java-publish.gradle'

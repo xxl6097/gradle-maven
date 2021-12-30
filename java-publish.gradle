@@ -1,0 +1,72 @@
+// 添加插件
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
+group = GROUP// groupId
+version = project.VERSION// 库的当前版本
+
+
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = project.NAME
+            from components.java
+            pom {
+                name = project.NAME
+                description = DESCRIPTION
+                url = project.SRCURL
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = AUTHOR_ID
+                        name = AUTHOR_NAME
+                        email = AUTHOR_EMAIL
+                    }
+                }
+                scm {
+                    connection = project.CONNECTION
+                    developerConnection = project.CONNECTION
+                    url = project.SRCURL
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username = USERNAME
+                password = PASSWORD
+            }
+            def releasesRepoUrl = RELEASEURL
+            def snapshotsRepoUrl = SNAPSHOTSURL
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
