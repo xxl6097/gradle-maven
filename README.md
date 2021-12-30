@@ -39,6 +39,7 @@
 | SNAPSHOTSURL        | 是   | 私服快照地址                         |
 | signing.keyId       | 是   | 签名key                          |
 | signing.password    | 是   | 签名密码                           |
+| signing.secretKeyRingFile    | 是   | 注意签名文件路径                           |
 | AUTHOR_ID           | 否   | 开发者ID，随意填写                     |
 | AUTHOR_NAME         | 否   | 开发者姓名                          |
 | AUTHOR_EMAIL        | 否   | 开发者姓名邮箱                        |
