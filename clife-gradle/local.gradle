@@ -1,0 +1,54 @@
+apply plugin: 'maven'//maven插件，用于上传插件到仓库
+def isRelease(){
+    return false
+}
+//gradle install
+//gradle bintrayUpload
+def isLocal(){
+    return true
+}
+def getVersion(){
+    def version = project.c_libversion
+    if (isRelease()){
+        return version
+    }else{
+        return version + "-SNAPSHOT"
+    }
+}
+
+def getUri(){
+//    return "https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-snapshots"
+    if (isLocal()){
+        return "../repo"
+    }
+    if (isRelease()){
+        return "http://200.200.200.40:8083/nexus/content/repositories/clife-android-releases/"
+    }else{
+        return "http://200.200.200.40:8083/nexus/content/repositories/clife-android-snapshots/"
+    }
+}
+
+uploadArchives{
+    repositories {
+        mavenDeployer{
+            repository(url: uri(getUri()))
+            pom.groupId = project.c_groupid
+            pom.artifactId = project.c_libname
+            pom.version = getVersion()
+
+//            repository(url: uri(getUri())) {
+//                authentication(userName: "xiaoli.xia@clife.cn", password: "het002402")
+//            }
+//            snapshotRepository(url: uri(getUri())) {
+//                authentication(userName: "xiaoli.xia@clife.cn", password: "het002402")
+//            }
+
+            repository(url: uri(getUri())) {
+                authentication(userName: "clife-android", password: "add123")
+            }
+            snapshotRepository(url: uri(getUri())) {
+                authentication(userName: "clife-android", password: "add123")
+            }
+        }
+    }
+}

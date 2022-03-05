@@ -1,0 +1,52 @@
+apply plugin: 'java'//导入java插件用于，编译打包我们的插件
+apply plugin: 'groovy'
+
+
+dependencies {
+  implementation gradleApi()
+  implementation localGroovy()
+  implementation "com.google.code.gson:gson:2.8.0"
+  //implementation 'org.tmatesoft.svnkit:svnkit:1.8.11'
+  implementation "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
+  implementation 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+
+  //okhttp
+  //implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+  implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+
+  //implementation 'com.github.szhittech:clife-bintray:0.0.1'
+  //implementation 'com.android.tools.build:gradle:3.5.2'
+  //implementation 'com.android.tools.build:gradle-api:3.5.2'
+  //testImplementation 'com.android.tools.build:gradle-api:3.5.2'
+//  classpath 'com.android.tools.build:gradle:3.5.2'
+
+}
+
+configurations.all {
+  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+
+ext {
+  NAME = 'clife-gradle'
+  //加上-SNAPSHOT 后缀就是发布快照版本,需要加SNAPSHOT的maven依赖
+  VERSION = '0.0.4-SNAPSHOT'
+  //以下是非必填项
+  DESCRIPTION='A Gradle Plugin For Clife'
+  SRCURL='https://e.coding.net/clife-devops/clifepublic/gradle-maven'
+  CONNECTION='https://e.coding.net/clife-devops/clifepublic/gradle-maven.git'
+}
+
+//apply from: 'local.gradle'//本地测试
+apply from: '../java-publish.gradle'//发布maven center
+
+
+
+task createReleasePropertiesFile(type:Exec) {
+  String fileName = 'clife.plugin.release.properties'
+  //println 'Creating $fileName'
+  String fileContent = "version="+VERSION
+  //println fileContent
+  File file = new File("$projectDir/src/main/resources/$fileName")
+  file.write(fileContent)
+}
