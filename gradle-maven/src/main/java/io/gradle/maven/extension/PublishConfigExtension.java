@@ -1,6 +1,6 @@
-package io.gradle.maven;
+package io.gradle.maven.extension;
 
-public class GradlePublishExtension {
+public class PublishConfigExtension {
     /**
      * The source code should be published default, otherwise not
      */
@@ -19,4 +19,5 @@ public class GradlePublishExtension {
 
 
     public String version = "";
+    public String name = "";
 }

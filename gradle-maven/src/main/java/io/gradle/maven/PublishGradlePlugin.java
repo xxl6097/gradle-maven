@@ -1,15 +1,18 @@
 package io.gradle.maven;
 
-import groovy.lang.Closure;
 import io.gradle.maven.component.AndroidComponent;
+import io.gradle.maven.component.BaseComponent;
 import io.gradle.maven.component.JavaComponent;
 import io.gradle.maven.component.KotlinComponent;
+import io.gradle.maven.extension.PublishConfigExtension;
+import io.gradle.maven.manager.PropertyManager;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.artifacts.repositories.PasswordCredentials;
+import org.gradle.api.component.SoftwareComponent;
 import org.gradle.api.publish.Publication;
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
@@ -17,26 +20,28 @@ import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
+import org.gradle.util.GradleVersion;
 
 import java.net.URI;
+import java.util.function.Consumer;
 
-public class PublishGradle implements Plugin<Project> {
+public class PublishGradlePlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
-        final GradlePublishExtension extension = project.getExtensions().create("GradleConfig",GradlePublishExtension.class);
+        PropertyManager.getInstance().init(project);
+        final PublishConfigExtension extension = project.getExtensions().create("pubconfig", PublishConfigExtension.class);
         project.afterEvaluate(new Action<Project>() {
             @Override
             public void execute(Project project) {
                 configurePublishing(project, extension);
-                if (extension.version.endsWith("-SNAPSHOT")){
+                if (GradleVersion.current().compareTo(GradleVersion.version("4.8")) >= 0 && !extension.version.endsWith("-SNAPSHOT")) {
                     configureSigning(project);
                 }
             }
         });
     }
 
-
-    void configurePublishing(final Project project, final GradlePublishExtension extension){
+    void configurePublishing(final Project project, final PublishConfigExtension extension) {
         project.getPluginManager().apply(MavenPublishPlugin.class);
 
         project.getPlugins().withType(MavenPublishPlugin.class, new Action<MavenPublishPlugin>() {
@@ -49,16 +54,20 @@ public class PublishGradle implements Plugin<Project> {
                         publishing.publications(new Action<PublicationContainer>() {
                             @Override
                             public void execute(PublicationContainer publication) {
-                                publication.create("maven", new Action<Publication>() {
+                                publication.create("maven", MavenPublication.class, new Action<MavenPublication>() {
                                     @Override
-                                    public void execute(Publication publication) {
-                                        MavenPublication maven = (MavenPublication) publication;
-                                        if(maven != null){
-                                            maven.setVersion(project.getVersion().toString());
-                                            componentLibrary(project).buildComponent(maven,extension);
+                                    public void execute(MavenPublication maven) {
+                                        maven.setVersion(extension.version);
+                                        maven.setArtifactId(extension.name);
+                                        maven.setGroupId(PropertyManager.getInstance().getEntity().group);
+                                        BaseComponent component = componentLibrary(project);
+                                        if (component == null){
+                                            throw new NullPointerException("BaseComponent Is NUll");
                                         }
+                                        component.buildComponent(maven, extension);
                                     }
                                 });
+
                             }
                         });
                         //
@@ -69,13 +78,16 @@ public class PublishGradle implements Plugin<Project> {
                                 repository.maven(new Action<MavenArtifactRepository>() {
                                     @Override
                                     public void execute(MavenArtifactRepository mavenRepository) {
-                                        URI uri = URI.create("");//(version.endsWith("-SNAPSHOT")) extension.snapshotRepository else extension.releaseRepository
+                                        String version = extension.version;
+                                        String repourl = version.endsWith("-SNAPSHOT") ? PropertyManager.getInstance().getEntity().snapshotUrl : PropertyManager.getInstance().getEntity().releaseUrl;
+
+                                        URI uri = URI.create(repourl);
                                         mavenRepository.setUrl(uri);
                                         mavenRepository.credentials(new Action<PasswordCredentials>() {
                                             @Override
                                             public void execute(PasswordCredentials credential) {
-                                                credential.setUsername("");
-                                                credential.setPassword("");
+                                                credential.setUsername(PropertyManager.getInstance().getEntity().repoUserName);
+                                                credential.setPassword(PropertyManager.getInstance().getEntity().repoPassword);
                                             }
                                         });
                                     }
@@ -89,13 +101,43 @@ public class PublishGradle implements Plugin<Project> {
     }
 
 
-    BaseComponent componentLibrary(Project project){
-        if (project.getPlugins().hasPlugin("java-library") && !project.getPlugins().hasPlugin("org.jetbrains.kotlin.jvm")){
+    private BaseComponent componentLibrary(Project project) {
+        project.getPlugins().forEach(new Consumer<Plugin>() {
+            @Override
+            public void accept(Plugin plugin) {
+                Logc.e("-->"+plugin.toString());
+            }
+        });
+
+
+        Plugin tmp = project.getPlugins().findPlugin("com.android.library");
+        if (tmp != null){
+            Logc.e("1111++>"+tmp.toString());
+        }
+        tmp = project.getPlugins().findPlugin("java");
+        if (tmp != null){
+            Logc.e("2222222++>"+tmp.toString());
+        }
+        tmp = project.getPlugins().findPlugin("org.jetbrains.kotlin.jvm");
+        if (tmp != null){
+            Logc.e("33333++>"+tmp.toString());
+        }
+        tmp = project.getPlugins().findPlugin("java-library");
+        if (tmp != null){
+            Logc.e("44444++>"+tmp.toString());
+        }
+
+        if (project.getPlugins().hasPlugin("java")) {
+            Logc.i("java");
             return new JavaComponent(project);
-        }else if (project.getPlugins().hasPlugin("com.android.library")){
+        } else if (project.getPlugins().hasPlugin("com.android.library")) {
+            Logc.i("com.android.library");
             return new AndroidComponent(project);
-        }else if (project.getPlugins().hasPlugin("org.jetbrains.kotlin.jvm")){
+        } else if (project.getPlugins().hasPlugin("org.jetbrains.kotlin.jvm")) {
+            Logc.i("org.jetbrains.kotlin.jvm");
             return new KotlinComponent(project);
+        }else{
+            Logc.i("nulllllllll");
         }
         return null;
     }

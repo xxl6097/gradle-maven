@@ -1,5 +1,6 @@
-package io.gradle.maven;
+package io.gradle.maven.component;
 
+import io.gradle.maven.extension.PublishConfigExtension;
 import org.gradle.api.Project;
 import org.gradle.api.publish.maven.MavenPublication;
 
@@ -10,7 +11,7 @@ public abstract class BaseComponent {
         this.project = project;
     }
 
-    void buildComponent(MavenPublication mavenPublication, GradlePublishExtension extension){
+    public void buildComponent(MavenPublication mavenPublication, PublishConfigExtension extension){
         fromComponent(mavenPublication);
 
         if (extension.sourceJarEnabled) {
@@ -22,7 +23,7 @@ public abstract class BaseComponent {
         withPom(mavenPublication);
     }
 
-    protected abstract Object fromComponent(MavenPublication mavenPublication);
+    protected abstract void fromComponent(MavenPublication mavenPublication);
 
     protected abstract Object docJar();
 
