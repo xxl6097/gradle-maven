@@ -16,6 +16,7 @@ import org.gradle.api.component.SoftwareComponent;
 import org.gradle.api.publish.Publication;
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
+import org.gradle.api.publish.maven.MavenPom;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.plugins.signing.SigningExtension;
@@ -65,6 +66,11 @@ public class PublishGradlePlugin implements Plugin<Project> {
                                             throw new NullPointerException("BaseComponent Is NUll");
                                         }
                                         component.buildComponent(maven, extension);
+                                        maven.pom(new Action<MavenPom>() {
+                                            @Override
+                                            public void execute(MavenPom mavenPom) {
+                                            }
+                                        });
                                     }
                                 });
 
