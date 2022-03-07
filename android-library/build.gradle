@@ -16,7 +16,7 @@ buildscript {
 pubconfig {
     name = 'android-library' // use '-' connect
 //    version = "1.0.0-SNAPSHOT"
-    version = "1.0.1"
+    version = "1.0.6"
 }
 
 android {

@@ -3,11 +3,9 @@
   <groupId>io.github.szhittech</groupId>
   <artifactId>gradle-maven</artifactId>
   <versioning>
-    <release>0.0.1</release>
     <versions>
-      <version>0.0.1</version>
       <version>0.0.0-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20220307152843</lastUpdated>
+    <lastUpdated>20220307160752</lastUpdated>
   </versioning>
 </metadata>
