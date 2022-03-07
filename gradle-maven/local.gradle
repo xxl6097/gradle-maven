@@ -1,0 +1,31 @@
+apply plugin: 'maven'//maven插件，用于上传插件到仓库
+def isRelease(){
+    return false
+}
+//gradle install
+//gradle bintrayUpload
+def isLocal(){
+    return true
+}
+def getVersion(){
+    def version = project.VERSION
+    return version
+}
+
+def getUri(){
+//    return "https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-snapshots"
+    if (isLocal()){
+        return "../repo"
+    }
+}
+
+uploadArchives{
+    repositories {
+        mavenDeployer{
+            repository(url: uri(getUri()))
+            pom.groupId = 'io.github.szhittech'
+            pom.artifactId = project.NAME
+            pom.version = getVersion()
+        }
+    }
+}

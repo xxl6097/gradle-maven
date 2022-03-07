@@ -30,19 +30,19 @@
     AUTHOR_NAME=xiaxiaoli
     AUTHOR_EMAIL='xiaoli.xia@clife.cn
 
-| 参数                  | 必选  | 描述                             |
-|:--------------------|:----|--------------------------------|
-| GROUP               | 是   | 组名称，需要在[sonatype](https://issues.sonatype.org)注册认证，详见组名注册 |
-| USERNAME            | 是   | 私服用户名                          |
-| PASSWORD            | 是   | 私服密码                           |
-| RELEASEURL          | 是   | 私服release地址                    |
-| SNAPSHOTSURL        | 是   | 私服快照地址                         |
-| signing.keyId       | 是   | 签名key                          |
-| signing.password    | 是   | 签名密码                           |
-| signing.secretKeyRingFile    | 是   | 注意签名文件路径                           |
-| AUTHOR_ID           | 否   | 开发者ID，随意填写                     |
-| AUTHOR_NAME         | 否   | 开发者姓名                          |
-| AUTHOR_EMAIL        | 否   | 开发者姓名邮箱                        |
+| 参数                        | 必选  | 描述                                                        |
+|:--------------------------|:----|-----------------------------------------------------------|
+| GROUP                     | 是   | 组名称，需要在[sonatype](https://issues.sonatype.org)注册认证，详见组名注册 |
+| USERNAME                  | 是   | 私服用户名                                                     |
+| PASSWORD                  | 是   | 私服密码                                                      |
+| RELEASEURL                | 是   | 私服release地址                                               |
+| SNAPSHOTSURL              | 是   | 私服快照地址                                                    |
+| signing.keyId             | 是   | 签名key                                                     |
+| signing.password          | 是   | 签名密码                                                      |
+| signing.secretKeyRingFile | 是   | 注意签名文件路径                                                  |
+| AUTHOR_ID                 | 否   | 开发者ID，随意填写                                                |
+| AUTHOR_NAME               | 否   | 开发者姓名                                                     |
+| AUTHOR_EMAIL              | 否   | 开发者姓名邮箱                                                   |
 
 
 ### xxx-library/build.gradle源文件介绍
