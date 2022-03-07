@@ -1,4 +1,24 @@
 apply plugin: 'com.android.library'
+
+apply plugin: 'clife.maven'
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url uri('../repo')
+        }
+    }
+    dependencies {
+        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+    }
+}
+
+pubconfig {
+    name = 'android-library' // use '-' connect
+//    version = "1.0.0-SNAPSHOT"
+    version = "1.0.1"
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
@@ -30,14 +50,14 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
 
-ext {
-    NAME = 'hetandroidsdk'
-    //加上-SNAPSHOT后缀就是发布快照版本,需要加SNAPSHOT的maven依赖
-    VERSION = '0.0.1'
-    //以下是非必填项
-    DESCRIPTION='A Library For Android'
-    SRCURL='https://github.com/szhittech/hetandroidsdk'
-    CONNECTION='scm:git@github.com:szhittech/hetandroidsdk.git'
-}
-
-apply from: '../android-publish.gradle'
+//ext {
+//    NAME = 'hetandroidsdk'
+//    //加上-SNAPSHOT后缀就是发布快照版本,需要加SNAPSHOT的maven依赖
+//    VERSION = '0.0.1'
+//    //以下是非必填项
+//    DESCRIPTION='A Library For Android'
+//    SRCURL='https://github.com/szhittech/hetandroidsdk'
+//    CONNECTION='scm:git@github.com:szhittech/hetandroidsdk.git'
+//}
+//
+//apply from: '../android-publish.gradle'

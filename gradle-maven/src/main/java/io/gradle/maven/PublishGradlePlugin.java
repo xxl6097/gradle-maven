@@ -105,27 +105,9 @@ public class PublishGradlePlugin implements Plugin<Project> {
         project.getPlugins().forEach(new Consumer<Plugin>() {
             @Override
             public void accept(Plugin plugin) {
-                Logc.e("-->"+plugin.toString());
+//                Logc.e("-->"+plugin.toString());
             }
         });
-
-
-        Plugin tmp = project.getPlugins().findPlugin("com.android.library");
-        if (tmp != null){
-            Logc.e("1111++>"+tmp.toString());
-        }
-        tmp = project.getPlugins().findPlugin("java");
-        if (tmp != null){
-            Logc.e("2222222++>"+tmp.toString());
-        }
-        tmp = project.getPlugins().findPlugin("org.jetbrains.kotlin.jvm");
-        if (tmp != null){
-            Logc.e("33333++>"+tmp.toString());
-        }
-        tmp = project.getPlugins().findPlugin("java-library");
-        if (tmp != null){
-            Logc.e("44444++>"+tmp.toString());
-        }
 
         if (project.getPlugins().hasPlugin("java")) {
             Logc.i("java");

@@ -17,8 +17,8 @@ configurations.all {
 ext {
   NAME = 'gradle-maven'
   //加上-SNAPSHOT 后缀就是发布快照版本,需要加SNAPSHOT的maven依赖
-  VERSION = '0.0.0'
-//  VERSION = '0.0.0-SNAPSHOT'
+//  VERSION = '0.0.1'
+  VERSION = '0.0.0-SNAPSHOT'
   //以下是非必填项
   DESCRIPTION='A Gradle Plugin For Clife'
   SRCURL='https://e.coding.net/clife-devops/clifepublic/gradle-maven'
