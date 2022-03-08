@@ -25,82 +25,107 @@ public class PropertyManager {
     public void init(Project project){
         extraProperties = project.getExtensions().getExtraProperties();
         entity = new PropertiesEntity();
-        if (extraProperties.has("repo.username")) {
-            Object string = extraProperties.get("repo.username");
-            if (string != null && string instanceof String) {
-                entity.repoUserName = (String) string;
-            }
-        }else{
-            throw new NullPointerException("please set repo.username in build.gradle");
-        }
 
-        if (extraProperties.has("repo.password")) {
-            Object string = extraProperties.get("repo.password");
-            if (string != null && string instanceof String) {
-                entity.repoPassword = (String) string;
-            }
-        }else{
-            throw new NullPointerException("please set repo.password in build.gradle");
-        }
-
-        if (extraProperties.has("repo.group")) {
-            Object string = extraProperties.get("repo.group");
+        if (extraProperties.has("group")) {
+            Object string = extraProperties.get("group");
             if (string != null && string instanceof String) {
                 entity.group = (String) string;
             }
         }else{
-            throw new NullPointerException("please set group in build.gradle");
+            entity.group = "io.github.szhittech";
         }
 
-        if (extraProperties.has("repo.snapshot")) {
-            Object string = extraProperties.get("repo.snapshot");
+        if (extraProperties.has("maven.username")) {
+            Object string = extraProperties.get("maven.username");
             if (string != null && string instanceof String) {
-                entity.snapshotUrl = (String) string;
+                entity.maven.username = (String) string;
             }
         }else{
-            throw new NullPointerException("please set repo.snapshot in build.gradle");
+            entity.maven.username = "szhittech";
         }
 
-        if (extraProperties.has("repo.release")) {
-            Object string = extraProperties.get("repo.release");
+        if (extraProperties.has("maven.password")) {
+            Object string = extraProperties.get("maven.password");
             if (string != null && string instanceof String) {
-                entity.releaseUrl = (String) string;
+                entity.maven.password = (String) string;
             }
         }else{
-            throw new NullPointerException("please set repo.release in build.gradle");
+            entity.maven.password = "het123456";
         }
 
-        if (extraProperties.has("author.Id")) {
-            Object string = extraProperties.get("author.Id");
+        if (extraProperties.has("maven.snapshot")) {
+            Object string = extraProperties.get("maven.snapshot");
             if (string != null && string instanceof String) {
-                entity.authorId = (String) string;
+                entity.maven.snapshot = (String) string;
+            }
+        }else{
+            entity.maven.snapshot = "https://s01.oss.sonatype.org/content/repositories/snapshots/";
+        }
+
+        if (extraProperties.has("maven.release")) {
+            Object string = extraProperties.get("maven.release");
+            if (string != null && string instanceof String) {
+                entity.maven.release = (String) string;
+            }
+        }else{
+            entity.maven.release = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/";
+        }
+
+        //私服
+        if (extraProperties.has("nexus.username")) {
+            Object string = extraProperties.get("nexus.username");
+            if (string != null && string instanceof String) {
+                entity.nexus.username = (String) string;
             }
         }
-
-        if (extraProperties.has("author.name")) {
-            Object string = extraProperties.get("author.name");
+        if (extraProperties.has("nexus.password")) {
+            Object string = extraProperties.get("nexus.password");
             if (string != null && string instanceof String) {
-                entity.authorName = (String) string;
+                entity.nexus.password = (String) string;
             }
         }
-
-        if (extraProperties.has("author.email")) {
-            Object string = extraProperties.get("author.email");
+        if (extraProperties.has("nexus.snapshot")) {
+            Object string = extraProperties.get("nexus.snapshot");
             if (string != null && string instanceof String) {
-                entity.authorEmail = (String) string;
+                entity.nexus.snapshot = (String) string;
             }
         }
-
+        if (extraProperties.has("nexus.release")) {
+            Object string = extraProperties.get("nexus.release");
+            if (string != null && string instanceof String) {
+                entity.nexus.release = (String) string;
+            }
+        }
     }
 
+
     public class PropertiesEntity{
-        public String repoUserName;
-        public String repoPassword;
-        public String group;
-        public String snapshotUrl;
-        public String releaseUrl;
-        public String authorId;
-        public String authorName;
-        public String authorEmail;
+        public String group = null;
+        public MavenRepository maven = new MavenRepository();
+        public MavenRepository nexus = new MavenRepository();
+    }
+
+    public class MavenRepository{
+        public String snapshot = null;
+        public String release = null;
+        public String username = null;
+        public String password = null;
+
+        public String getUrl(String version){
+            return version.endsWith("-SNAPSHOT") ? snapshot : release;
+        }
+        public String geReversetUrl(String version){
+            return version.endsWith("-SNAPSHOT") ? release : snapshot;
+        }
+
+        @Override
+        public String toString() {
+            return "MavenRepository{" +
+                    "snapshot='" + snapshot + '\'' +
+                    ", release='" + release + '\'' +
+                    ", username='" + username + '\'' +
+                    ", password='" + password + '\'' +
+                    '}';
+        }
     }
 }

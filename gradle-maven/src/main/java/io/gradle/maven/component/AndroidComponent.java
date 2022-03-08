@@ -2,6 +2,7 @@ package io.gradle.maven.component;
 
 import com.android.build.gradle.LibraryExtension;
 import groovy.util.Node;
+import io.gradle.maven.extension.PublishConfigExtension;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -64,7 +65,7 @@ public class AndroidComponent extends BaseComponent {
     }
 
     @Override
-    protected Object withPom(MavenPublication mavenPublication) {
+    protected Object withPom(MavenPublication mavenPublication, PublishConfigExtension extension) {
         mavenPublication.pom(new Action<MavenPom>() {
             @Override
             public void execute(MavenPom mavenPom) {
@@ -103,7 +104,7 @@ public class AndroidComponent extends BaseComponent {
                 });
             }
         });
-        return super.withPom(mavenPublication);
+        return super.withPom(mavenPublication, extension);
     }
 
     void addDependency(Dependency dep, String scope,Node dependenciesNode){
