@@ -39,6 +39,7 @@ public class MavenTask extends DefaultTask {
 
     private void changeToMavenRepository(final Project project,final PublishConfigExtension extension){
         String version = extension.version;
+        String group = PropertyManager.getInstance().getEntity().group;
         String url = PropertyManager.getInstance().getEntity().maven.getUrl(version);
         String username = PropertyManager.getInstance().getEntity().maven.username;
         String password = PropertyManager.getInstance().getEntity().maven.password;
@@ -65,6 +66,9 @@ public class MavenTask extends DefaultTask {
                 defaultMavenArtifactRepository.setUrl(uri);
                 passwordCredentials.setUsername(username);
                 passwordCredentials.setPassword(password);
+                if (!StringUtils.isStringEmpty(group)){
+                    group.replaceAll(".","/");
+                }
 
             }
         });

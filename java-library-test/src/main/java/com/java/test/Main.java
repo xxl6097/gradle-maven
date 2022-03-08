@@ -21,8 +21,12 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        String cpuid = getCpuId();
-        System.out.println("--->"+cpuid);
+//        String cpuid = getCpuId();
+//        System.out.println("--->"+cpuid);
+
+        String group = "io.github.szhittech";
+        group = group.replaceAll(".","/");
+        System.out.println("--->"+group);
     }
 
     static {

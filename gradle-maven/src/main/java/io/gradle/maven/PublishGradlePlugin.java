@@ -61,6 +61,7 @@ public class PublishGradlePlugin implements Plugin<Project> {
             }
         });
 
+
     }
 
     void configurePublishing(final Project project, final PublishConfigExtension extension) {
@@ -74,7 +75,7 @@ public class PublishGradlePlugin implements Plugin<Project> {
             }
         });
 
-        taskFinally(project);
+        taskFinally(project,extension);
 
         final Task taskPublish = project.getTasks().getByName("publish");
 
@@ -355,7 +356,9 @@ public class PublishGradlePlugin implements Plugin<Project> {
     }
     //
 
-    private void taskFinally(final Project project){
+    private void taskFinally(final Project project, final PublishConfigExtension extension){
+        final String name = extension.name;
+        final String group = PropertyManager.getInstance().getEntity().group;
         project.getTasks().getByName("publish").doLast(new Action<Task>() {
             @Override
             public void execute(Task task) {
@@ -367,8 +370,15 @@ public class PublishGradlePlugin implements Plugin<Project> {
                     public void accept(ArtifactRepository artifactRepository) {
                         DefaultMavenArtifactRepository defaultMavenArtifactRepository = (DefaultMavenArtifactRepository) artifactRepository;
                         String url = defaultMavenArtifactRepository.getUrl().toString();
+
+                        url += group.replaceAll("\\.","/");
+                        url += "/"+name;
+
                         PasswordCredentials passwordCredentials = defaultMavenArtifactRepository.getCredentials(PasswordCredentials.class);
-                        Logc.e("发布完毕---->Repo info:" + url +" \r\n"+ passwordCredentials.getUsername()+" \r\n"+ passwordCredentials.getPassword());
+                        Logc.e("---->发布完毕");
+                        Logc.e("Library Address:" + url);
+//                        Logc.e(passwordCredentials.getUsername());
+//                        Logc.e(passwordCredentials.getPassword());
 
                     }
                 });
@@ -376,11 +386,9 @@ public class PublishGradlePlugin implements Plugin<Project> {
                     @Override
                     public void accept(Publication publication) {
                         DefaultMavenPublication defaultMavenPublication = (DefaultMavenPublication) publication;
-                        Logc.e(defaultMavenPublication.getName()+":"+defaultMavenPublication.getGroupId()+":"+defaultMavenPublication.getArtifactId()+":"+defaultMavenPublication.getVersion());
+                        Logc.e("gradle dependencies: implementation '"+defaultMavenPublication.getGroupId()+":"+defaultMavenPublication.getArtifactId()+":"+defaultMavenPublication.getVersion()+"'");
                     }
                 });
-
-                Logc.e("---->发布完毕 " );
 
             }
         });
