@@ -14,14 +14,22 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
+import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.artifacts.repositories.PasswordCredentials;
 import org.gradle.api.file.CopySpec;
+import org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository;
+import org.gradle.api.internal.provider.AbstractMinimalProvider;
 import org.gradle.api.internal.tasks.execution.SelfDescribingSpec;
+import org.gradle.api.publish.Publication;
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
+import org.gradle.api.publish.internal.DefaultPublicationContainer;
 import org.gradle.api.publish.maven.MavenPublication;
+import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication;
+import org.gradle.api.publish.maven.internal.publication.MavenPomInternal;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
+import org.gradle.api.services.BuildService;
 import org.gradle.api.tasks.TaskCollection;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
@@ -29,6 +37,7 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 import org.gradle.util.GradleVersion;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.util.function.Consumer;
@@ -69,15 +78,68 @@ public class PublishGradlePlugin implements Plugin<Project> {
             public void execute(PublishingExtension publishing) {
                 createMavenJavaPublications(project, publishing, extension);
                 makeMavenRepository(publishing,extension);
+//                makeNexusRepository(publishing,extension);
             }
         });
 
         project.getTasks().getByName("publish").doLast(new Action<Task>() {
             @Override
             public void execute(Task task) {
-                Logc.e("---->发布完毕");
+                PublishingExtension publishingExtension =  project.getExtensions().getByType(PublishingExtension.class);
+                DefaultPublicationContainer b = (DefaultPublicationContainer) publishingExtension.getPublications();
+
+                publishingExtension.getRepositories().forEach(new Consumer<ArtifactRepository>() {
+                    @Override
+                    public void accept(ArtifactRepository artifactRepository) {
+                        DefaultMavenArtifactRepository defaultMavenArtifactRepository = (DefaultMavenArtifactRepository) artifactRepository;
+                        String url = defaultMavenArtifactRepository.getUrl().toString();
+                        PasswordCredentials passwordCredentials = defaultMavenArtifactRepository.getCredentials(PasswordCredentials.class);
+                        Logc.e("---->Repo info:" + url +" \r\n"+ passwordCredentials.getUsername()+" \r\n"+ passwordCredentials.getPassword());
+
+                    }
+                });
+                publishingExtension.getPublications().forEach(new Consumer<Publication>() {
+                    @Override
+                    public void accept(Publication publication) {
+                        DefaultMavenPublication defaultMavenPublication = (DefaultMavenPublication) publication;
+                        Logc.e("getName:"+defaultMavenPublication.getName());
+                        Logc.e("getGroupId:"+defaultMavenPublication.getGroupId()+":"+defaultMavenPublication.getArtifactId()+":"+defaultMavenPublication.getVersion());
+                    }
+                });
+
+                Logc.e("---->发布完毕 " );
+
             }
         });
+
+
+        final MavenTask taskMaven = project.getTasks().create("publishToMaven", MavenTask.class);
+        taskMaven.setExtension(extension);
+        taskMaven.setGroup("maven");
+        taskMaven.dependsOn("publish");
+
+//        project.getTasks().getByName("publishSnapshotPublicationToMavenRepository").doFirst(new Action<Task>() {
+//            @Override
+//            public void execute(Task task) {
+//                PublishingExtension publishingExtension =  project.getExtensions().getByType(PublishingExtension.class);
+//                DefaultPublicationContainer b = (DefaultPublicationContainer) publishingExtension.getPublications();
+//
+//                publishingExtension.getRepositories().forEach(new Consumer<ArtifactRepository>() {
+//                    @Override
+//                    public void accept(ArtifactRepository artifactRepository) {
+//                        DefaultMavenArtifactRepository defaultMavenArtifactRepository = (DefaultMavenArtifactRepository) artifactRepository;
+//                        String url = defaultMavenArtifactRepository.getUrl().toString();
+//                        PasswordCredentials passwordCredentials = defaultMavenArtifactRepository.getCredentials(PasswordCredentials.class);
+//                        Logc.e("doLast---->Repo info:" + url +" \r\n"+ passwordCredentials.getUsername()+" \r\n"+ passwordCredentials.getPassword());
+//                        final URI uri = URI.create("https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-snapshots/");
+//                        defaultMavenArtifactRepository.setUrl(uri);
+//                        passwordCredentials.setUsername("xiaoli.xia@clife.cn");
+//                        passwordCredentials.setPassword("het002402");
+//
+//                    }
+//                });
+//            }
+//        });
 
     }
 
@@ -85,7 +147,9 @@ public class PublishGradlePlugin implements Plugin<Project> {
         publishing.publications(new Action<PublicationContainer>() {
             @Override
             public void execute(PublicationContainer publication) {
-                publication.create("mavenJava", MavenPublication.class, new Action<MavenPublication>() {
+                boolean isSnapshot = StringUtils.isSnapshot(extension.version);
+                String mavenName = isSnapshot?"snapshot":"release";
+                publication.create(mavenName, MavenPublication.class, new Action<MavenPublication>() {
                     @Override
                     public void execute(MavenPublication maven) {
                         maven.setVersion(extension.version);
@@ -93,7 +157,7 @@ public class PublishGradlePlugin implements Plugin<Project> {
                         maven.setGroupId(PropertyManager.getInstance().getEntity().group);
                         BaseComponent component = componentLibrary(project);
                         if (component == null){
-                            throw new NullPointerException("BaseComponent Is NUll");
+                            throw new NullPointerException("BaseComponent Is Null");
                         }
                         component.buildComponent(maven, extension);
                     }

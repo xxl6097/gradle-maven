@@ -13,10 +13,13 @@ import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
+import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.artifacts.repositories.PasswordCredentials;
+import org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository;
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
+import org.gradle.api.publish.internal.DefaultPublicationContainer;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 import org.gradle.api.tasks.TaskAction;
@@ -25,6 +28,8 @@ import org.gradle.plugins.signing.SigningPlugin;
 import org.gradle.util.GradleVersion;
 
 import java.net.URI;
+import java.net.URL;
+import java.util.function.Consumer;
 
 public class MavenTask extends DefaultTask {
     PublishConfigExtension extension;
@@ -45,8 +50,26 @@ public class MavenTask extends DefaultTask {
         if (project != project.getRootProject()){
         }
         Logc.e("---->MavenTask.taskAction");
-//        createMavenJavaPublications(project, publishing, extension);
-//        makeMavenRepository(publishing,extension);
+
+
+        PublishingExtension publishingExtension =  project.getExtensions().getByType(PublishingExtension.class);
+        DefaultPublicationContainer b = (DefaultPublicationContainer) publishingExtension.getPublications();
+
+        publishingExtension.getRepositories().forEach(new Consumer<ArtifactRepository>() {
+            @Override
+            public void accept(ArtifactRepository artifactRepository) {
+                DefaultMavenArtifactRepository defaultMavenArtifactRepository = (DefaultMavenArtifactRepository) artifactRepository;
+                String url = defaultMavenArtifactRepository.getUrl().toString();
+                PasswordCredentials passwordCredentials = defaultMavenArtifactRepository.getCredentials(PasswordCredentials.class);
+                Logc.e("MavenTask---->Repo info:" + url +" \r\n"+ passwordCredentials.getUsername()+" \r\n"+ passwordCredentials.getPassword());
+                final URI uri = URI.create("https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-snapshots/");
+                defaultMavenArtifactRepository.setUrl(uri);
+                passwordCredentials.setUsername("xiaoli.xia@clife.cn");
+                passwordCredentials.setPassword("het002402");
+
+            }
+        });
+
     }
     void configurePublishing(final Project project, final PublishConfigExtension extension) {
         project.getPluginManager().apply(MavenPublishPlugin.class);
