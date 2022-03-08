@@ -16,6 +16,7 @@ import org.gradle.api.Task;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.artifacts.repositories.PasswordCredentials;
+import org.gradle.api.file.CopySpec;
 import org.gradle.api.internal.tasks.execution.SelfDescribingSpec;
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
@@ -63,19 +64,6 @@ public class PublishGradlePlugin implements Plugin<Project> {
     void configurePublishing(final Project project, final PublishConfigExtension extension) {
         project.getPluginManager().apply(MavenPublishPlugin.class);
 
-//        project.getPlugins().withType(MavenPublishPlugin.class, new Action<MavenPublishPlugin>() {
-//            @Override
-//            public void execute(MavenPublishPlugin mavenPublishPlugin) {
-//                project.getExtensions().configure(PublishingExtension.class, new Action<PublishingExtension>() {
-//                    @Override
-//                    public void execute(PublishingExtension publishing) {
-//                        createMavenJavaPublications(project, publishing, extension);
-//                        makeMavenRepository(publishing,extension);
-//                    }
-//                });
-//            }
-//        });
-
         project.getExtensions().configure(PublishingExtension.class, new Action<PublishingExtension>() {
             @Override
             public void execute(PublishingExtension publishing) {
@@ -84,15 +72,12 @@ public class PublishGradlePlugin implements Plugin<Project> {
             }
         });
 
-//        MavenPublishPlugin mavenPublishPlugin = project.getPlugins().getPlugin(MavenPublishPlugin.class);
-
         project.getTasks().getByName("publish").doLast(new Action<Task>() {
             @Override
             public void execute(Task task) {
-                Logc.e("---->MavenTask.doLast");
+                Logc.e("---->发布完毕");
             }
         });
-
 
     }
 
