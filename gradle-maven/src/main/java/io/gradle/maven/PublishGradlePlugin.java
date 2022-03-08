@@ -7,6 +7,7 @@ import io.gradle.maven.component.KotlinComponent;
 import io.gradle.maven.extension.PublishConfigExtension;
 import io.gradle.maven.manager.PropertyManager;
 import io.gradle.maven.task.MavenTask;
+import io.gradle.maven.task.NexusTask;
 import io.gradle.maven.util.Logc;
 import io.gradle.maven.util.StringUtils;
 import org.gradle.api.Action;
@@ -60,14 +61,6 @@ public class PublishGradlePlugin implements Plugin<Project> {
             }
         });
 
-
-
-//        final MavenTask taskMaven = project.getTasks().create("publishToMaven", MavenTask.class);
-//        taskMaven.setExtension(extension);
-//        taskMaven.setGroup("maven");
-////        taskMaven.dependsOn("publish");
-//
-//        project.getTasks().getByName("publish").dependsOn(taskMaven);
     }
 
     void configurePublishing(final Project project, final PublishConfigExtension extension) {
@@ -78,69 +71,40 @@ public class PublishGradlePlugin implements Plugin<Project> {
             public void execute(PublishingExtension publishing) {
                 createMavenJavaPublications(project, publishing, extension);
                 makeMavenRepository(publishing,extension);
-//                makeNexusRepository(publishing,extension);
             }
         });
 
-        project.getTasks().getByName("publish").doLast(new Action<Task>() {
-            @Override
-            public void execute(Task task) {
-                PublishingExtension publishingExtension =  project.getExtensions().getByType(PublishingExtension.class);
-                DefaultPublicationContainer b = (DefaultPublicationContainer) publishingExtension.getPublications();
+        taskFinally(project);
 
-                publishingExtension.getRepositories().forEach(new Consumer<ArtifactRepository>() {
-                    @Override
-                    public void accept(ArtifactRepository artifactRepository) {
-                        DefaultMavenArtifactRepository defaultMavenArtifactRepository = (DefaultMavenArtifactRepository) artifactRepository;
-                        String url = defaultMavenArtifactRepository.getUrl().toString();
-                        PasswordCredentials passwordCredentials = defaultMavenArtifactRepository.getCredentials(PasswordCredentials.class);
-                        Logc.e("---->Repo info:" + url +" \r\n"+ passwordCredentials.getUsername()+" \r\n"+ passwordCredentials.getPassword());
+        final Task taskPublish = project.getTasks().getByName("publish");
 
-                    }
-                });
-                publishingExtension.getPublications().forEach(new Consumer<Publication>() {
-                    @Override
-                    public void accept(Publication publication) {
-                        DefaultMavenPublication defaultMavenPublication = (DefaultMavenPublication) publication;
-                        Logc.e("getName:"+defaultMavenPublication.getName());
-                        Logc.e("getGroupId:"+defaultMavenPublication.getGroupId()+":"+defaultMavenPublication.getArtifactId()+":"+defaultMavenPublication.getVersion());
-                    }
-                });
-
-                Logc.e("---->发布完毕 " );
-
-            }
-        });
-
-
-        final MavenTask taskMaven = project.getTasks().create("publishToMaven", MavenTask.class);
-        taskMaven.setExtension(extension);
-        taskMaven.setGroup("maven");
-        taskMaven.dependsOn("publish");
-
-//        project.getTasks().getByName("publishSnapshotPublicationToMavenRepository").doFirst(new Action<Task>() {
+//        Task taskMaven = project.getTasks().create("publishToMaven", new Action<Task>() {
 //            @Override
 //            public void execute(Task task) {
-//                PublishingExtension publishingExtension =  project.getExtensions().getByType(PublishingExtension.class);
-//                DefaultPublicationContainer b = (DefaultPublicationContainer) publishingExtension.getPublications();
-//
-//                publishingExtension.getRepositories().forEach(new Consumer<ArtifactRepository>() {
-//                    @Override
-//                    public void accept(ArtifactRepository artifactRepository) {
-//                        DefaultMavenArtifactRepository defaultMavenArtifactRepository = (DefaultMavenArtifactRepository) artifactRepository;
-//                        String url = defaultMavenArtifactRepository.getUrl().toString();
-//                        PasswordCredentials passwordCredentials = defaultMavenArtifactRepository.getCredentials(PasswordCredentials.class);
-//                        Logc.e("doLast---->Repo info:" + url +" \r\n"+ passwordCredentials.getUsername()+" \r\n"+ passwordCredentials.getPassword());
-//                        final URI uri = URI.create("https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-snapshots/");
-//                        defaultMavenArtifactRepository.setUrl(uri);
-//                        passwordCredentials.setUsername("xiaoli.xia@clife.cn");
-//                        passwordCredentials.setPassword("het002402");
-//
-//                    }
-//                });
+//                changeToMavenRepository(project, extension);
+//                task.finalizedBy(taskPublish);
 //            }
 //        });
+//        taskMaven.setGroup("maven");
+//
+//
+//        Task taskNexus = project.getTasks().create("publishToNexus", new Action<Task>() {
+//            @Override
+//            public void execute(Task task) {
+//                changeToNexusRepository(project, extension);
+//                task.finalizedBy(taskPublish);
+//            }
+//        });
+//        taskNexus.setGroup("maven");
 
+
+        final NexusTask nexus = project.getTasks().create("publishToNexus", NexusTask.class,extension);
+        nexus.setGroup("maven");
+        nexus.finalizedBy(taskPublish);
+
+        final MavenTask maven = project.getTasks().create("publishToMaven", MavenTask.class,extension);
+        maven.setGroup("maven");
+        maven.finalizedBy(taskPublish);
     }
 
     private void createMavenJavaPublications(final Project project,final PublishingExtension publishing,final PublishConfigExtension extension){
@@ -274,6 +238,72 @@ public class PublishGradlePlugin implements Plugin<Project> {
     }
     //
 
+    private void changeToMavenRepository(final Project project,final PublishConfigExtension extension){
+        String version = extension.version;
+        String url = PropertyManager.getInstance().getEntity().maven.getUrl(version);
+        String username = PropertyManager.getInstance().getEntity().maven.username;
+        String password = PropertyManager.getInstance().getEntity().maven.password;
+        if (StringUtils.isStringEmpty(url)){
+            throw new NullPointerException("maven url is null");
+        }
+        if (StringUtils.isStringEmpty(username)){
+            throw new NullPointerException("maven username is null");
+        }
+        if (StringUtils.isStringEmpty(password)){
+            throw new NullPointerException("maven password is null");
+        }
+        final URI uri = URI.create(url);
+
+        PublishingExtension publishingExtension =  project.getExtensions().getByType(PublishingExtension.class);
+
+        publishingExtension.getRepositories().forEach(new Consumer<ArtifactRepository>() {
+            @Override
+            public void accept(ArtifactRepository artifactRepository) {
+                DefaultMavenArtifactRepository defaultMavenArtifactRepository = (DefaultMavenArtifactRepository) artifactRepository;
+                String url = defaultMavenArtifactRepository.getUrl().toString();
+                PasswordCredentials passwordCredentials = defaultMavenArtifactRepository.getCredentials(PasswordCredentials.class);
+                Logc.e("changeToMavenRepository:\r\n" + url +" \r\n"+ passwordCredentials.getUsername()+" \r\n"+ passwordCredentials.getPassword());
+                defaultMavenArtifactRepository.setUrl(uri);
+                passwordCredentials.setUsername(username);
+                passwordCredentials.setPassword(password);
+
+            }
+        });
+    }
+
+    private void changeToNexusRepository(final Project project,final PublishConfigExtension extension){
+        String version = extension.version;
+        String url = PropertyManager.getInstance().getEntity().nexus.getUrl(version);
+        String username = PropertyManager.getInstance().getEntity().nexus.username;
+        String password = PropertyManager.getInstance().getEntity().nexus.password;
+        if (StringUtils.isStringEmpty(url)){
+            throw new NullPointerException("nexus url is null");
+        }
+        if (StringUtils.isStringEmpty(username)){
+            throw new NullPointerException("nexus username is null");
+        }
+        if (StringUtils.isStringEmpty(password)){
+            throw new NullPointerException("nexus password is null");
+        }
+        final URI uri = URI.create(url);
+
+        PublishingExtension publishingExtension =  project.getExtensions().getByType(PublishingExtension.class);
+
+        publishingExtension.getRepositories().forEach(new Consumer<ArtifactRepository>() {
+            @Override
+            public void accept(ArtifactRepository artifactRepository) {
+                DefaultMavenArtifactRepository defaultMavenArtifactRepository = (DefaultMavenArtifactRepository) artifactRepository;
+                String url = defaultMavenArtifactRepository.getUrl().toString();
+                PasswordCredentials passwordCredentials = defaultMavenArtifactRepository.getCredentials(PasswordCredentials.class);
+                Logc.e("changeToNexusRepository:\r\n" + url +" \r\n"+ passwordCredentials.getUsername()+" \r\n"+ passwordCredentials.getPassword());
+                defaultMavenArtifactRepository.setUrl(uri);
+                passwordCredentials.setUsername(username);
+                passwordCredentials.setPassword(password);
+
+            }
+        });
+    }
+
     private void loadRepositories(final Project project,final PublishConfigExtension extension){
         String url = PropertyManager.getInstance().getEntity().nexus.snapshot;
         if (!StringUtils.isStringEmpty(url)){
@@ -324,4 +354,35 @@ public class PublishGradlePlugin implements Plugin<Project> {
 
     }
     //
+
+    private void taskFinally(final Project project){
+        project.getTasks().getByName("publish").doLast(new Action<Task>() {
+            @Override
+            public void execute(Task task) {
+                PublishingExtension publishingExtension =  project.getExtensions().getByType(PublishingExtension.class);
+                DefaultPublicationContainer b = (DefaultPublicationContainer) publishingExtension.getPublications();
+
+                publishingExtension.getRepositories().forEach(new Consumer<ArtifactRepository>() {
+                    @Override
+                    public void accept(ArtifactRepository artifactRepository) {
+                        DefaultMavenArtifactRepository defaultMavenArtifactRepository = (DefaultMavenArtifactRepository) artifactRepository;
+                        String url = defaultMavenArtifactRepository.getUrl().toString();
+                        PasswordCredentials passwordCredentials = defaultMavenArtifactRepository.getCredentials(PasswordCredentials.class);
+                        Logc.e("发布完毕---->Repo info:" + url +" \r\n"+ passwordCredentials.getUsername()+" \r\n"+ passwordCredentials.getPassword());
+
+                    }
+                });
+                publishingExtension.getPublications().forEach(new Consumer<Publication>() {
+                    @Override
+                    public void accept(Publication publication) {
+                        DefaultMavenPublication defaultMavenPublication = (DefaultMavenPublication) publication;
+                        Logc.e(defaultMavenPublication.getName()+":"+defaultMavenPublication.getGroupId()+":"+defaultMavenPublication.getArtifactId()+":"+defaultMavenPublication.getVersion());
+                    }
+                });
+
+                Logc.e("---->发布完毕 " );
+
+            }
+        });
+    }
 }
