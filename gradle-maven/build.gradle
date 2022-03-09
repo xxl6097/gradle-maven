@@ -33,5 +33,5 @@ task createReleasePropertiesFile(type:Exec) {
   file.write(fileContent)
 }
 
-//apply from: 'local.gradle'//本地测试
-apply from: '../java-publish.gradle'//发布maven center
+apply from: 'local.gradle'//本地测试
+//apply from: '../java-publish.gradle'//发布maven center

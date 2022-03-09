@@ -1,5 +1,8 @@
 //include ':clife-gradle'
 //include ':java-library'
-//include ':android-library'
-include ':java-library-test'
+include ':android-library'
+//include ':java-library-test'
 include ':gradle-maven'
+//include ':secret'
+
+

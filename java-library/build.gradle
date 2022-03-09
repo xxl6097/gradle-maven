@@ -26,13 +26,12 @@ test {
 }
 
 ext {
-    NAME = 'hetjavasdk'
-    //加上-SNAPSHOT 后缀就是发布快照版本,需要加SNAPSHOT的maven依赖
-    VERSION = '0.0.2'
-    //以下是非必填项
-    DESCRIPTION='A Library For Java'
-    SRCURL='https://github.com/szhittech/hetjavasdk'
-    CONNECTION='scm:git@github.com:szhittech/hetjavasdk.git'
+    groupId = "io.github.szhittech"
+    name = "java-library"
+//    version = "0.0.1-SNAPSHOT"
+    version = "0.0.4"
+    description = "A Library For java-library."
+    url = "https://github.com/szhittech/java-library"
 }
 
 apply from: '../java-publish.gradle'

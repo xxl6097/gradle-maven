@@ -35,13 +35,6 @@ public class SecringUtil {
         return null;
     }
 
-
-    /**
-     * 将InputStream写入本地文件
-     * @param destination 写入本地目录
-     * @param input 输入流
-     * @throws IOException IOException
-     */
     public static void writeToLocal(String destination, InputStream input)
             throws IOException {
         int index;

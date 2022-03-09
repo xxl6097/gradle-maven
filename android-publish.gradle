@@ -3,8 +3,8 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
-group = GROUP// groupId
-version = project.VERSION// 库的当前版本
+group = project.ext.groupId// groupId
+version = project.ext.version// 库的当前版本
 
 // 生成jar包的task
 task sourcesJar(type: Jar) {
@@ -22,47 +22,80 @@ signing {
     //required { gradle.taskGraph.hasTask("uploadArchives") }
 }
 
+def getUserName(){
+    return property('maven.username')
+}
+def getPassWord(){
+    return property('maven.password')
+}
+
+def getRelease(){
+    return property('maven.release')
+}
+def getSnapshot(){
+    return property('maven.snapshot')
+}
+
 uploadArchives {
     repositories {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-            repository(url: RELEASEURL) {
-                authentication(userName: USERNAME, password: PASSWORD)
+            repository(url: getRelease()) {
+                authentication(userName: getUserName(), password: getPassWord())
             }
 
-            snapshotRepository(url: SNAPSHOTSURL) {
-                authentication(userName: USERNAME, password: PASSWORD)
+            snapshotRepository(url: getSnapshot()) {
+                authentication(userName: getUserName(), password: getPassWord())
             }
 
             pom.project {
-                name project.NAME// 项目名称
+                name project.ext.name// 项目名称
                 packaging 'aar'// 资源类型
-                artifactId project.NAME// 库名
-                description project.DESCRIPTION// 描述
-                url project.SRCURL
-
-                scm {
-                    connection project.CONNECTION
-                    developerConnection project.CONNECTION
-                    url project.SRCURL
-                }
+                artifactId project.ext.name// 库名
+                description project.ext.has("description")?project.ext.description:'A Library For android-library.'
+                url project.ext.has("url")?project.ext.url:'https://github.com/szhittech/android-library'
 
                 licenses {
                     license {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
-
                 developers {
                     developer {
-                        id AUTHOR_ID// 开发者账号
-                        name AUTHOR_NAME// 名字
-                        email AUTHOR_EMAIL// 邮箱
+                        id = project.ext.has("authId")?project.ext.authId:'uuxia'
+                        name = project.ext.has("authName")?project.ext.authName:'xiaxiaoli'
+                        email = project.ext.has("authEmail")?project.ext.authEmail:'xiaoli.xia@clife.cn'
                     }
+                }
+                scm {
+                    connection = project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
+                    developerConnection = project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
+                    url = project.ext.has("url")?project.ext.url:'https://github.com/szhittech'
                 }
             }
         }
     }
+}
+
+
+
+task dowloadSecret{
+    String bpath = project.buildDir.getAbsolutePath();
+    File fBuild = new File(bpath)
+    if (!fBuild.exists())
+        fBuild.mkdir()
+    String secretFile = bpath + File.separator + "secring.gpg";
+    println '***dowloadSecret:' + secretFile
+    download('https://s01.oss.sonatype.org/content/repositories/snapshots/io/github/szhittech/secret/1-SNAPSHOT/secret-1-20220309.132250-1.gpg',secretFile);
+    project.ext.setProperty('signing.keyId','FB58CB54');
+    project.ext.setProperty('signing.password','2475431305');
+    project.ext.setProperty('signing.secretKeyRingFile',secretFile);
+}
+
+
+static def download(String url, String name) {
+    def file = new File(name)
+    file << new URL(url).openStream()
 }
