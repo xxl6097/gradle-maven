@@ -1,12 +1,7 @@
 package com.java.test;
 
 
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -24,41 +19,73 @@ public class Main {
 //        String cpuid = getCpuId();
 //        System.out.println("--->"+cpuid);
 
-        String group = "io.github.szhittech";
-        group = group.replaceAll(".","/");
-        System.out.println("--->"+group);
+        File file = new File("/Users/uuxia/Desktop/code/java/gradle-maven/secring.gpg");
+        long ll = file.length();
+//        InputStream in = new FileInputStream(file);
+//        String group = "io.github.szhittech";
+//        group = group.replaceAll(".","/");
+//        System.out.println("--->"+group);
+
+        byte[] bytes = getBytesByFile(file.getAbsolutePath());
+        System.out.println(new String(bytes));
+//        System.out.println(Arrays.toString(bytes));
+
+        //Base64.getEncoder().encode(bytes);
+        String secretFile = "/Users/uuxia/Desktop/secring.gpg";
+//        byteToFile(secret,secretFile);
     }
 
-    static {
-        System.out.println("java版本号：" + System.getProperty("java.version")); // java版本号
-        System.out.println("Java提供商名称：" + System.getProperty("java.vendor")); // Java提供商名称
-        System.out.println("Java提供商网站：" + System.getProperty("java.vendor.url")); // Java提供商网站
-        System.out.println("jre目录：" + System.getProperty("java.home")); // Java，哦，应该是jre目录
-        System.out.println("Java虚拟机规范版本号：" + System.getProperty("java.vm.specification.version")); // Java虚拟机规范版本号
-        System.out.println("Java虚拟机规范提供商：" + System.getProperty("java.vm.specification.vendor")); // Java虚拟机规范提供商
-        System.out.println("Java虚拟机规范名称：" + System.getProperty("java.vm.specification.name")); // Java虚拟机规范名称
-        System.out.println("Java虚拟机版本号：" + System.getProperty("java.vm.version")); // Java虚拟机版本号
-        System.out.println("Java虚拟机提供商：" + System.getProperty("java.vm.vendor")); // Java虚拟机提供商
-        System.out.println("Java虚拟机名称：" + System.getProperty("java.vm.name")); // Java虚拟机名称
-        System.out.println("Java规范版本号：" + System.getProperty("java.specification.version")); // Java规范版本号
-        System.out.println("Java规范提供商：" + System.getProperty("java.specification.vendor")); // Java规范提供商
-        System.out.println("Java规范名称：" + System.getProperty("java.specification.name")); // Java规范名称
-        System.out.println("Java类版本号：" + System.getProperty("java.class.version")); // Java类版本号
-        System.out.println("Java类路径：" + System.getProperty("java.class.path")); // Java类路径
-        System.out.println("Java lib路径：" + System.getProperty("java.library.path")); // Java lib路径
-        System.out.println("Java输入输出临时路径：" + System.getProperty("java.io.tmpdir")); // Java输入输出临时路径
-        System.out.println("Java编译器：" + System.getProperty("java.compiler")); // Java编译器
-        System.out.println("Java执行路径：" + System.getProperty("java.ext.dirs")); // Java执行路径
-        System.out.println("操作系统名称：" + System.getProperty("os.name")); // 操作系统名称
-        System.out.println("操作系统的架构：" + System.getProperty("os.arch")); // 操作系统的架构
-        System.out.println("操作系统版本号：" + System.getProperty("os.version")); // 操作系统版本号
-        System.out.println("文件分隔符：" + System.getProperty("file.separator")); // 文件分隔符
-        System.out.println("路径分隔符：" + System.getProperty("path.separator")); // 路径分隔符
-        System.out.println("直线分隔符：" + System.getProperty("line.separator")); // 直线分隔符
-        System.out.println("操作系统用户名：" + System.getProperty("user.name")); // 用户名
-        System.out.println("操作系统用户的主目录：" + System.getProperty("user.home")); // 用户的主目录
-        System.out.println("当前程序所在目录：" + System.getProperty("user.dir")); // 当前程序所在目录
+    //将文件转换成Byte数组
+    public static byte[] getBytesByFile(String pathStr) {
+        File file = new File(pathStr);
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
+            byte[] b = new byte[1000];
+            int n;
+            while ((n = fis.read(b)) != -1) {
+                bos.write(b, 0, n);
+            }
+            fis.close();
+            byte[] data = bos.toByteArray();
+            bos.close();
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
+
+    public static void byteToFile(byte[] byteArray, String targetPath) {
+        InputStream in = new ByteArrayInputStream(byteArray);
+        File file = new File(targetPath);
+        String path = targetPath.substring(0, targetPath.lastIndexOf("/"));
+        if (!file.exists()) {
+            new File(path).mkdir();
+        }
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            int len = 0;
+            byte[] buf = new byte[1024];
+            while ((len = in.read(buf)) != -1) {
+                fos.write(buf, 0, len);
+            }
+            fos.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (null != fos) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
     /**
      * 获取主板序列号
      *
@@ -198,11 +225,11 @@ public class Main {
                 num++;
                 System.out.println(sb.toString().toUpperCase());
             }
-            string =  resultStr;
+            string = resultStr;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        System.out.println("设备MAC地址:"+string);
+        System.out.println("设备MAC地址:" + string);
         return string;
     }
 
@@ -374,7 +401,6 @@ public class Main {
     }
 
 
-
     /**
      * 获取当前系统CPU序列，可区分linux系统和windows系统
      * cat /proc/cpuinfo |grep "Serial"|awk {'print $3'}
@@ -390,17 +416,17 @@ public class Main {
         // windows系统用 wmic cpu get ProcessorId 查看cpu序列
         if (os.contains("linux")) {
             cpuId = executeLinuxCmd("uname -a");
-            System.out.println("---->"+cpuId);
-            if(cpuId.toLowerCase().contains("raspberry")){
+            System.out.println("---->" + cpuId);
+            if (cpuId.toLowerCase().contains("raspberry")) {
                 System.out.println("树莓派");
                 cpuId = getLinuxCpuId("cat /proc/cpuinfo |grep Serial", "Serial", ":");
-            }else{
+            } else {
                 System.out.println("linux系统");
                 cpuId = getLinuxCpuId("dmidecode -t processor | grep 'ID'", "ID", ":");
             }
-        }else if(os.contains("windows")){
+        } else if (os.contains("windows")) {
             cpuId = getWindowsCpuId();
-        }else if(os.contains("mac os")){
+        } else if (os.contains("mac os")) {
             cpuId = getLinuxCpuId("system_profiler SPHardwareDataType |grep Serial", "Serial", ":");
             System.out.println("macos");
         } else {
@@ -455,5 +481,6 @@ public class Main {
         String serial = sc.next();
         return serial;
     }
+
 }
 

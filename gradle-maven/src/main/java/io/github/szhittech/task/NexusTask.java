@@ -1,11 +1,11 @@
 package io.github.szhittech.task;
 
+import io.github.szhittech.extension.MConfig;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.PasswordCredentials;
 import org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository;
-import org.gradle.api.logging.Logging;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.tasks.TaskAction;
 
@@ -14,16 +14,15 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import io.github.szhittech.extension.PublishConfigExtension;
 import io.github.szhittech.property.PropertyManager;
 import io.github.szhittech.util.StringUtils;
 
 public class NexusTask extends DefaultTask {
 
-    private PublishConfigExtension extension;
+    private MConfig extension;
 
     @Inject
-    public NexusTask(PublishConfigExtension extension) {
+    public NexusTask(MConfig extension) {
         this.extension = extension;
     }
 
@@ -35,7 +34,7 @@ public class NexusTask extends DefaultTask {
         changeToNexusRepository(project,extension);
     }
 
-    private void changeToNexusRepository(final Project project,final PublishConfigExtension extension){
+    private void changeToNexusRepository(final Project project,final MConfig extension){
         String version = extension.version;
         String url = PropertyManager.getInstance().getEntity().nexus.getUrl(version);
         String username = PropertyManager.getInstance().getEntity().nexus.username;

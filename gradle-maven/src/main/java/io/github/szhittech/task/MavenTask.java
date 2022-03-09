@@ -1,11 +1,11 @@
 package io.github.szhittech.task;
 
+import io.github.szhittech.extension.MConfig;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.PasswordCredentials;
 import org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository;
-import org.gradle.api.logging.Logging;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.tasks.TaskAction;
 
@@ -14,15 +14,14 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import io.github.szhittech.extension.PublishConfigExtension;
 import io.github.szhittech.property.PropertyManager;
 import io.github.szhittech.util.StringUtils;
 
 public class MavenTask extends DefaultTask {
-    private PublishConfigExtension extension;
+    private MConfig extension;
 
     @Inject
-    public MavenTask(PublishConfigExtension extension) {
+    public MavenTask(MConfig extension) {
         this.extension = extension;
         //Logc.e("---->MavenTask.MavenTask : "+extension.name+":"+extension.version);
     }
@@ -37,9 +36,8 @@ public class MavenTask extends DefaultTask {
     }
 
 
-    private void changeToMavenRepository(final Project project,final PublishConfigExtension extension){
+    private void changeToMavenRepository(final Project project,final MConfig extension){
         String version = extension.version;
-        String group = PropertyManager.getInstance().getEntity().group;
         String url = PropertyManager.getInstance().getEntity().maven.getUrl(version);
         String username = PropertyManager.getInstance().getEntity().maven.username;
         String password = PropertyManager.getInstance().getEntity().maven.password;

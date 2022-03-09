@@ -35,15 +35,6 @@ public class PropertyManager {
 
         isDebug = extraProperties.has("debug");
 
-        if (extraProperties.has("group")) {
-            Object string = extraProperties.get("group");
-            if (string != null && string instanceof String) {
-                entity.group = (String) string;
-            }
-        } else {
-            entity.group = "io.github.szhittech";
-        }
-
         entity.maven.name = "maven";
         if (extraProperties.has(entity.maven.name + ".username")) {
             Object string = extraProperties.get(entity.maven.name+".username");
@@ -122,7 +113,6 @@ public class PropertyManager {
 
 
     public class PropertiesEntity {
-        public String group = null;
         public MavenRepository maven = new MavenRepository();
         public MavenRepository nexus = new MavenRepository();
     }

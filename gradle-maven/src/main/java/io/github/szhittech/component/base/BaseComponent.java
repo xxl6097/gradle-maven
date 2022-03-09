@@ -1,7 +1,7 @@
 package io.github.szhittech.component.base;
 
 
-import io.github.szhittech.extension.PublishConfigExtension;
+import io.github.szhittech.extension.MConfig;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.publish.maven.*;
@@ -22,7 +22,7 @@ public abstract class BaseComponent {
         this.project = project;
     }
 
-    public void buildComponent(MavenPublication mavenPublication, PublishConfigExtension extension){
+    public void buildComponent(MavenPublication mavenPublication, MConfig extension){
         fromComponent(mavenPublication);
 
         if (extension.sourceJarEnabled) {
@@ -58,7 +58,7 @@ public abstract class BaseComponent {
 
     protected abstract Object sourcesJar();
 
-    protected Object withPom(final MavenPublication mavenPublication, final PublishConfigExtension extension) {
+    protected Object withPom(final MavenPublication mavenPublication, final MConfig extension) {
         mavenPublication.pom(new Action<MavenPom>() {
             @Override
             public void execute(MavenPom mavenPom) {

@@ -13,28 +13,25 @@ configurations.all {
   resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
-
 ext {
-  NAME = 'gradle-maven'
-  //加上-SNAPSHOT 后缀就是发布快照版本,需要加SNAPSHOT的maven依赖
-//  VERSION = '0.0.1'
-  VERSION = '0.0.0-SNAPSHOT'
-  //以下是非必填项
-  DESCRIPTION='A Gradle Plugin For Clife'
-  SRCURL='https://e.coding.net/clife-devops/clifepublic/gradle-maven'
-  CONNECTION='https://e.coding.net/clife-devops/clifepublic/gradle-maven.git'
+  groupId = "io.github.szhittech"
+  name = "gradle-maven"
+  version = "0.0.0-SNAPSHOT"
+//  version = "0.0.0"
+  description = "A Gradle Plugin For Clife"
+  url = "https://e.coding.net/clife-devops/clifepublic/gradle-maven"
+  connection = "https://e.coding.net/clife-devops/clifepublic/gradle-maven.git"
 }
-
-apply from: 'local.gradle'//本地测试
-//apply from: '../java-publish.gradle'//发布maven center
-
 
 
 task createReleasePropertiesFile(type:Exec) {
-  String fileName = 'clife.plugin.release.properties'
+  String fileName = 'maven.plugin.release.properties'
   //println 'Creating $fileName'
-  String fileContent = "version="+VERSION
+  String fileContent = "version=" + project.version
   //println fileContent
   File file = new File("$projectDir/src/main/resources/$fileName")
   file.write(fileContent)
 }
+
+//apply from: 'local.gradle'//本地测试
+apply from: '../java-publish.gradle'//发布maven center

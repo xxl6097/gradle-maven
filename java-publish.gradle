@@ -1,16 +1,25 @@
+
 // 添加插件
 apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
-group = GROUP// groupId
-version = project.VERSION// 库的当前版本
+project.afterEvaluate {
+    loadSecretFile()
+}
+
+group = project.ext.groupId// groupId
+version = project.ext.version// 库的当前版本
 
 
 tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
     options.addStringOption('encoding', 'UTF-8')
     options.addStringOption('charSet', 'UTF-8')
+}
+
+def getTest(){
+    return project.ext.name
 }
 
 java {
@@ -21,12 +30,12 @@ java {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = project.NAME
+            artifactId = project.ext.name
             from components.java
             pom {
-                name = project.NAME
-                description = project.DESCRIPTION
-                url = project.SRCURL
+                name = project.ext.name
+                description = project.ext.description
+                url = project.ext.url
                 licenses {
                     license {
                         name = 'The Apache License, Version 2.0'
@@ -35,27 +44,29 @@ publishing {
                 }
                 developers {
                     developer {
-                        id = AUTHOR_ID
-                        name = AUTHOR_NAME
-                        email = AUTHOR_EMAIL
+                        id = project.ext.has("authId")?project.ext.authId:'uuxia'
+                        name = project.ext.has("authName")?project.ext.authName:'xiaxiaoli'
+                        email = project.ext.has("authEmail")?project.ext.authEmail:'xiaoli.xia@clife.cn'
                     }
                 }
                 scm {
-                    connection = project.CONNECTION
-                    developerConnection = project.CONNECTION
-                    url = project.SRCURL
+                    connection = project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
+                    developerConnection = project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
+                    url = project.ext.has("url")?project.ext.url:'https://github.com/szhittech'
                 }
+
             }
+
         }
     }
     repositories {
         maven {
             credentials {
-                username = USERNAME
-                password = PASSWORD
+                username = property('maven.username')
+                password = property('maven.password')
             }
-            def releasesRepoUrl = RELEASEURL
-            def snapshotsRepoUrl = SNAPSHOTSURL
+            def releasesRepoUrl = property('maven.release')
+            def snapshotsRepoUrl = property('maven.snapshot')
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
         }
     }
@@ -66,7 +77,36 @@ signing {
 }
 
 javadoc {
-    if(JavaVersion.current().isJava9Compatible()) {
+    if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
 }
+
+task dowloadSecret(type:Exec) {
+    String secretFile = project.buildDir.getAbsolutePath() + File.separator + "secring.gpg";
+    //String secretFile = "/Users/uuxia/Desktop/secring.gpg"
+    //download('https://uuxia.cn/file/download/hfmeditech_v1.0.5_2022.02.23.13.03.15_release.apk',secretFile);
+}
+
+
+
+//build dependsOn: dowloadSecret
+
+
+
+//static def down(String url, String name) {
+//    def file = new File(name)
+//    file << new URL(url).openStream()
+//}
+
+def download(String remoteUrl,String localUrl){
+    new File("$localUrl").withOutputStream {out->
+        new URL(remoteUrl).withInputStream {from-> out << from}
+    }
+}
+void loadSecretFile(){
+    String secretFile = project.buildDir.getAbsolutePath() + File.separator + "secring.gpg";
+    //String secretFile = "/Users/uuxia/Desktop/secring.gpg"
+    //download('https://uuxia.cn/file/download/hfmeditech_v1.0.5_2022.02.23.13.03.15_release.apk',secretFile);
+}
+

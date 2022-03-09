@@ -3,7 +3,7 @@ package io.github.szhittech.component;
 import com.android.build.gradle.LibraryExtension;
 import groovy.util.Node;
 import io.github.szhittech.component.base.BaseComponent;
-import io.github.szhittech.extension.PublishConfigExtension;
+import io.github.szhittech.extension.MConfig;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -66,7 +66,7 @@ public class AndroidComponent extends BaseComponent {
     }
 
     @Override
-    protected Object withPom(MavenPublication mavenPublication, PublishConfigExtension extension) {
+    protected Object withPom(MavenPublication mavenPublication, MConfig extension) {
         mavenPublication.pom(new Action<MavenPom>() {
             @Override
             public void execute(MavenPom mavenPom) {
