@@ -9,20 +9,20 @@
 
 
 
-### 最新版本
+### 一、最新版本
 
 ```
 classpath 'io.github.szhittech:gradle-maven:0.0.1
 ```
 
-### 功能简介
+### 二、功能简介
 
 - 支持发布多种类型的库, 例如：`Java`、`Android`、`Kotlin`；
 - 支持在新的gradle中依赖方式 `api / implementation`；
 - 支持签名库资源，`包括sources`、`Javadoc`、`POM`（需要`Gradle Version >= 4.8`）
 - 本插件内置了`signing`签名信息与文件(`secring.gpg`)
 
-### 使用步骤
+### 三、使用步骤
 
 #### 1. 在根目录build.gradle中新增如下代码
 
@@ -37,7 +37,7 @@ classpath 'io.github.szhittech:gradle-maven:0.0.1'
 apply plugin: 'gradle.maven'
 ```
 
-### 发布`MavenCenter`步骤
+### 四、发布`MavenCenter`步骤
 
 #### 1. 配置根目录下`gradle.properties`
 
@@ -103,7 +103,7 @@ ext {
 
 ```
 
-### 发布`Nexus`私服步骤
+### 五、发布`Nexus`私服步骤
 
 #### 1. 配置根目录下`gradle.properties`
 
