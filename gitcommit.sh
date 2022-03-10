@@ -9,10 +9,16 @@ function pull() {
   git pull
 }
 
-function forcepull() {
+function forcepullmaster() {
   todir
   echo "git fetch --all && git reset --hard origin/master && git pull"
   git fetch --all && git reset --hard origin/master && git pull
+}
+
+function forcepullmain() {
+  todir
+  echo "git fetch --all && git reset --hard origin/main && git pull"
+  git fetch --all && git reset --hard origin/main && git pull
 }
 
 
@@ -33,16 +39,18 @@ function gitpush() {
 }
 
 function menu() {
-    echo "1. 强制更新"
-    echo "2. 普通更新"
-    echo "3. 提交项目"
+    echo "1. 强制更新[origin/master]"
+    echo "2. 强制更新[origin/main]"
+    echo "3. 普通更新"
+    echo "4. 提交项目"
     echo "请输入编号:"
     read index
 
     case "$index" in
-    [1]) (forcepull);;
-    [2]) (pull);;
-    [3]) (gitpush);;
+    [1]) (forcepullmaster);;
+    [2]) (forcepullmain);;
+    [3]) (pull);;
+    [4]) (gitpush);;
     *) echo "exit" ;;
   esac
 }
