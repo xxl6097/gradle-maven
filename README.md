@@ -1,7 +1,7 @@
 ## Gradle发布MavenCenter和Nexus私服插件
 
 ### 介绍
-本插件基于`Java`语言开发，可以让你的`library`发布到`MavenCenter`和自己的`nexus`私服变得非常容易。
+基于`Java`语言与`Gradle Api`开发的`Gradle Plugin`，本`Gradle插件`可以让你的`library`发布到`MavenCenter`和自己的`nexus`私服变得非常容易。
 
 ![gradle-publish-plugin.png](img/gradle-publish-plugin.png)
 
