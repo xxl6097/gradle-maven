@@ -81,6 +81,23 @@ ext {
 4. 勾选`iogithubszhittect-xxxx`，点击`Close`；
 5. 稍等几十秒 `Refresh`，再次勾选`iogithubszhittect-xxxx`，点击`Release`,即可发布成功，等待大概4小时；
 
+#### 4. 自定`Maven oss`账号配置
+
+因本插件与`groupId = "io.github.szhittech"`绑定，如果用户需要添加自己的`groupid`，则需要在`gradle.properties`配置`Maven oss`账号
+
+`Maven oss`账号注册，请至[https://s01.oss.sonatype.org/](https://s01.oss.sonatype.org/)注册
+
+`gradle.properties`配置如下：
+
+
+```
+#maven.name=maven
+#maven.username=你的oss账号
+#maven.password=你的oss密码
+#maven.release=https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
+#maven.snapshot=https://s01.oss.sonatype.org/content/repositories/snapshots/
+
+```
 
 ### 发布`Nexus`私服步骤
 
