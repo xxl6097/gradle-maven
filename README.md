@@ -1,25 +1,23 @@
-## Gradle发布MavenCenter和私服插件
+## Gradle发布MavenCenter和Nexus私服插件
 
 ### 介绍
-本插件基于Java语言开发，让你的库发布到MavenCenter和自己的nexus私服变得非常容易。
+本插件基于Java语言开发，可以让你的`library`发布到`MavenCenter`和自己的`nexus`私服变得非常容易。
 
 ![gradle-publish-plugin.png](img/gradle-publish-plugin.png)
 
 
-本项目只要演示Android Library项目和Java Library项目如何发布SNAPSHOT和RELEASE版到Maven Center,其中包含了源码示范。
-
 ### 功能简介
 
-- 支持发布多种类型的库, 例如：Java、Android、Kotlin；
-- 支持在新的gradle中依赖方式 api / implementation；
-- 支持签名库资源，包括sources、Javadoc、POM（需要Gradle Version >= 4.8）
-- 本插件内置了signing签名信息与文件(secring.gpg)
+- 支持发布多种类型的库, 例如：`Java`、`Android`、`Kotlin`；
+- 支持在新的gradle中依赖方式 `api / implementation`；
+- 支持签名库资源，`包括sources`、`Javadoc`、`POM`（需要`Gradle Version >= 4.8`）
+- 本插件内置了`signing`签名信息与文件(`secring.gpg`)
 
-### 发布MavenCenter步骤
+### 发布`MavenCenter`步骤
 
 #### 1. 配置根目录下`gradle.properties`
 
-如果发布到MavenCenter，该文件无需配置
+如果发布到`MavenCenter`，该文件无需配置
 
 #### 2. 配置`library/build.gradle`
 
@@ -56,7 +54,7 @@ ext {
 
 如上如，点击`uploadToMaven`，即可将库发布到MavenCenter
 
-发布MavenCenter成功后Release版步审核步骤如下：
+发布`MavenCenter`成功后 `Release`版步审核步骤如下：
 1. 上述步骤成功后，请登录[https://s01.oss.sonatype.org/](https://s01.oss.sonatype.org/);
 2. 页面左侧栏点击`Build Promotion`->`Staging Repositories`；
 3. 在`Staging Repositories`选项卡可以看到刚提交的release版本库，如：`iogithubszhittect-xxxx`;
@@ -64,7 +62,7 @@ ext {
 5. 稍等几十秒 `Refresh`，再次勾选`iogithubszhittect-xxxx`，点击`Release`,即可发布成功，等待大概4小时；
 
 
-### 发布Nexus私服步骤
+### 发布`Nexus`私服步骤
 
 #### 1. 配置根目录下`gradle.properties`
 
