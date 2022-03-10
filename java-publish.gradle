@@ -50,28 +50,32 @@ def getNexusRelease() {
 
 def getMavenUserName() {
     if (!project.hasProperty('maven.username')) {
-        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.username=wahaha'")
+        //throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.username=wahaha'")
+        return 'szhittech'
     }
     return property('maven.username')
 }
 
 def getMavenPassWord() {
     if (!project.hasProperty('maven.password')) {
-        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.password=hahahaha'")
+        //throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.password=hahahaha'")
+        return 'het123456'
     }
     return property('maven.password')
 }
 
 def getMavenSnapShot() {
     if (!project.hasProperty('maven.snapshot')) {
-        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.snapshot=http://snapshot.com'")
+        //throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.snapshot=http://snapshot.com'")
+        return 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
     }
     return property('maven.snapshot')
 }
 
 def getMavenRelease() {
     if (!project.hasProperty('maven.release')) {
-        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.release=http://release.com'")
+        //throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.release=http://release.com'")
+        return 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
     }
     return property('maven.release')
 }

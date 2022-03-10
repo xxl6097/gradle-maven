@@ -1,82 +1,126 @@
-# Android Library和Java Library发布Maven Center的方法
+## Gradle发布MavenCenter和私服插件
 
-#### 介绍
+### 介绍
+本插件基于Java语言开发，让你的库发布到MavenCenter和自己的nexus私服变得非常容易。
+
+![gradle-publish-plugin.png](img/gradle-publish-plugin.png)
+
+
 本项目只要演示Android Library项目和Java Library项目如何发布SNAPSHOT和RELEASE版到Maven Center,其中包含了源码示范。
 
-## 主要文件介绍
+### 功能简介
 
-1. gradle.properties
-2. xxx-library/build.gradle
-3. secring.gpg
-4. xxx-publish.gradle
+- 支持发布多种类型的库, 例如：Java、Android、Kotlin；
+- 支持在新的gradle中依赖方式 api / implementation；
+- 支持签名库资源，包括sources、Javadoc、POM（需要Gradle Version >= 4.8）
+- 本插件内置了signing签名信息与文件(secring.gpg)
 
-注： xxx代表android或者java
+### 发布MavenCenter步骤
 
+#### 1. 配置根目录下`gradle.properties`
 
-### gradle.properties源文件介绍
+如果发布到MavenCenter，该文件无需配置
 
-    GROUP=io.github.szhittech
-    #以下变量可以更改为本地私服的用户名密码和地址
-    USERNAME=szhittech
-    PASSWORD=het123456
-    RELEASEURL=https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
-    SNAPSHOTSURL=https://s01.oss.sonatype.org/content/repositories/snapshots/
-    #签名信息
-    signing.keyId=FB58CB54
-    signing.password=2475431305
-    signing.secretKeyRingFile=../secring.gpg
-    #以下是非必填项
-    AUTHOR_ID=uuxia
-    AUTHOR_NAME=xiaxiaoli
-    AUTHOR_EMAIL='xiaoli.xia@clife.cn
+#### 2. 配置`library/build.gradle`
 
-| 参数                        | 必选  | 描述                                                        |
-|:--------------------------|:----|-----------------------------------------------------------|
-| GROUP                     | 是   | 组名称，需要在[sonatype](https://issues.sonatype.org)注册认证，详见组名注册 |
-| USERNAME                  | 是   | 私服用户名                                                     |
-| PASSWORD                  | 是   | 私服密码                                                      |
-| RELEASEURL                | 是   | 私服release地址                                               |
-| SNAPSHOTSURL              | 是   | 私服快照地址                                                    |
-| signing.keyId             | 是   | 签名key                                                     |
-| signing.password          | 是   | 签名密码                                                      |
-| signing.secretKeyRingFile | 是   | 注意签名文件路径                                                  |
-| AUTHOR_ID                 | 否   | 开发者ID，随意填写                                                |
-| AUTHOR_NAME               | 否   | 开发者姓名                                                     |
-| AUTHOR_EMAIL              | 否   | 开发者姓名邮箱                                                   |
+```
+ext {
+  groupId = "io.github.szhittech"
+  name = "gradle-maven"
+  version = "0.0.0-SNAPSHOT"
+  description = "A Gradle Plugin For Java、Android、Kotlin."
+  url = "https://e.coding.net/clife-devops/clifepublic/gradle-maven.git"
+  connection = "scm:git@github.com:szhittech/clifesdk.git"
+  authorId = "uuxia"
+  authorName = "xiamoumou"
+  authorEmail = "xxx@163.com"
+}
 
+```
 
-### xxx-library/build.gradle源文件介绍
+| 参数          | 必选                         | 描述                               |
+|:------------|:---------------------------|----------------------------------|
+| groupId     | <font color='red'>是</font> | 项目组织唯一的标识符                       |
+| name        | <font color='red'>是</font> | 项目名称                             |
+| version     | <font color='red'>是</font> | 项目版本。有-SNAPSHOT发布快照，没有发布release版 |
+| description | 否                          | 项目描述                             |
+| url         | 否                          | 项目地址                             |
+| connection  | 否                          | 项目地址                             |
+| authorId    | 否                          | 作者ID                             |
+| authorName  | 否                          | 作者姓名                             |
+| authorEmail | 否                          | 作者邮箱                             |
 
+#### 3. 执行发布任务
 
-    ext {
-        NAME = 'hetandroidsdk'
-        //加上-SNAPSHOT后缀就是发布快照版本,需要加SNAPSHOT的maven依赖
-        VERSION = '0.0.0'
-        //以下是非必填项
-        DESCRIPTION='A Library For Android'
-        SRCURL='https://github.com/szhittech/hetandroidsdk'
-        CONNECTION='scm:git@github.com:szhittech/hetandroidsdk.git'
-    }
-    //这个依赖地址一定要正确
-    apply from: '../android-publish.gradle'
+![发布Maven](img/maven.jpg)
 
-### secring.gpg文件介绍
+如上如，点击`uploadToMaven`，即可将库发布到MavenCenter
 
-签名文件，可以直接下载本工程中签名文件使用
-
-### 使用说明
-1. 下载`xxx-publish.gradle`文件只工程根目录；
-2. 下载`secring.gpg`文件只工程根目录；
-3. 配置`gradle.properties`文件，可以直接拷贝本工程的内容；
-4. java到library目录下执行`gradle publish`,Android-library到library目录下执行`gradle uploadArchives`
-5. 上述步骤成功后，请登录[https://s01.oss.sonatype.org/](https://s01.oss.sonatype.org/);
-6. 页面左侧栏点击`Build Promotion`->`Staging Repositories`；
-7. 在`Staging Repositories`选项卡可以看到刚提交的release版本库，如：`iogithubszhittect-xxxx`;
-8. 勾选`iogithubszhittect-xxxx`，点击`Close`；
-9. 稍等几十秒 `Refresh`，再次勾选`iogithubszhittect-xxxx`，点击`Release`,即可发布成功，等待大概4小时；
+发布MavenCenter成功后Release版步审核步骤如下：
+1. 上述步骤成功后，请登录[https://s01.oss.sonatype.org/](https://s01.oss.sonatype.org/);
+2. 页面左侧栏点击`Build Promotion`->`Staging Repositories`；
+3. 在`Staging Repositories`选项卡可以看到刚提交的release版本库，如：`iogithubszhittect-xxxx`;
+4. 勾选`iogithubszhittect-xxxx`，点击`Close`；
+5. 稍等几十秒 `Refresh`，再次勾选`iogithubszhittect-xxxx`，点击`Release`,即可发布成功，等待大概4小时；
 
 
----
+### 发布Nexus私服步骤
+
+#### 1. 配置根目录下`gradle.properties`
+
+```
+nexus.name=coding
+coding.username=xiaoli.xia@clife.cn
+coding.password=xxxxxx
+coding.snapshot=https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-snapshots/
+coding.release=https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-releases/
+```
+
+| 参数             | 必选  | 描述                               |
+|:---------------|:----|----------------------------------|
+| nexus.name     | 是   | 私服前缀名称，本例coding，下面字段就都以coding为前缀 |
+| nexus.username | 是   | 私服用户名                            |
+| nexus.password | 是   | 私服密码                             |
+| nexus.snapshot | 是   | 私服快照版上传地址                        |
+| nexus.release  | 是   | 私服release版上传地址                   |
+
+
+#### 2. 配置`library/build.gradle`
+
+```
+ext {
+  groupId = "io.github.szhittech"
+  name = "gradle-maven"
+  version = "0.0.0-SNAPSHOT"
+  description = "A Gradle Plugin For Java、Android、Kotlin."
+  url = "https://e.coding.net/clife-devops/clifepublic/gradle-maven.git"
+  connection = "scm:git@github.com:szhittech/clifesdk.git"
+  authorId = "uuxia"
+  authorName = "xiamoumou"
+  authorEmail = "xxx@163.com"
+}
+
+```
+
+| 参数          | 必选                         | 描述                               |
+|:------------|:---------------------------|----------------------------------|
+| groupId     | <font color='red'>是</font> | 项目组织唯一的标识符                       |
+| name        | <font color='red'>是</font> | 项目名称                             |
+| version     | <font color='red'>是</font> | 项目版本。有-SNAPSHOT发布快照，没有发布release版 |
+| description | 否                          | 项目描述                             |
+| url         | 否                          | 项目地址                             |
+| connection  | 否                          | 项目地址                             |
+| authorId    | 否                          | 作者ID                             |
+| authorName  | 否                          | 作者姓名                             |
+| authorEmail | 否                          | 作者邮箱                             |
+
+#### 3. 执行发布任务
+
+![发布Maven](img/nexus.jpg)
+
+如上图，点击`uploadToCoding`，即可将库发布到Nexus私服
+
+**注意：这里的`Coding`就是上文自定义的前缀(`nexus.name`)**
 
 
 友情链接：
