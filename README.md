@@ -1,5 +1,10 @@
 ## Gradle发布MavenCenter和Nexus私服插件
 
+一款Gradle插件，可以将你的Java Library、Android Library和Kotlin Library轻松的发布到MavenCenter和自己的Mexus私服。
+![gradle-publish-plugin.png](gradle-maven/gradle-publish-plugin.png)
+
+<!--more-->
+
 ### 介绍
 基于`Java`语言与`Gradle Api`开发的`Gradle Plugin`，本`Gradle插件`可以让你的`library`发布到`MavenCenter`和自己的`nexus`私服变得非常容易。
 
