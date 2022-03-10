@@ -52,7 +52,7 @@ ext {
 
 ![发布Maven](img/maven.jpg)
 
-如上如，点击`uploadToMaven`，即可将库发布到MavenCenter
+如上图，点击`uploadToMaven`，即可将库发布到MavenCenter
 
 发布`MavenCenter`成功后 `Release`版步审核步骤如下：
 1. 上述步骤成功后，请登录[https://s01.oss.sonatype.org/](https://s01.oss.sonatype.org/);
