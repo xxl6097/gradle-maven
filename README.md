@@ -117,7 +117,7 @@ coding.release=https://clife-devops-maven.pkg.coding.net/repository/public-repos
 
 | 参数             | 必选  | 描述                                   |
 |:---------------|:----|--------------------------------------|
-| nexus.name     | 是   | 私服前缀名称，本例`coding`，下面字段就都以`coding`为前缀 |
+| nexus.name     | 是   | 自定义前缀名称，本例`coding`，下面字段就都以`coding`为前缀 |
 | coding.username | 是   | 私服用户名                                |
 | coding.password | 是   | 私服密码                                 |
 | coding.snapshot | 是   | 私服快照版上传地址                            |
