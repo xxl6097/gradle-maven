@@ -1,84 +1,78 @@
-// 添加插件
 apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
-group = project.ext.groupId// groupId
-version = project.ext.version// 库的当前版本
-
-// 生成jar包的task
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-// 签名
-signing {
-    sign configurations.archives
-    //required { gradle.taskGraph.hasTask("uploadArchives") }
-}
-
-def getUserName(){
+def getMavenUserName() {
+    if (!project.hasProperty('maven.username')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.username=wahaha'")
+    }
     return property('maven.username')
 }
-def getPassWord(){
+
+def getMavenPassWord() {
+    if (!project.hasProperty('maven.password')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.password=hahahaha'")
+    }
     return property('maven.password')
 }
 
-def getRelease(){
-    return property('maven.release')
-}
-def getSnapshot(){
+def getMavenSnapShot() {
+    if (!project.hasProperty('maven.snapshot')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.snapshot=http://snapshot.com'")
+    }
     return property('maven.snapshot')
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: getRelease()) {
-                authentication(userName: getUserName(), password: getPassWord())
-            }
-
-            snapshotRepository(url: getSnapshot()) {
-                authentication(userName: getUserName(), password: getPassWord())
-            }
-
-            pom.project {
-                name project.ext.name// 项目名称
-                packaging 'aar'// 资源类型
-                artifactId project.ext.name// 库名
-                description project.ext.has("description")?project.ext.description:'A Library For android-library.'
-                url project.ext.has("url")?project.ext.url:'https://github.com/szhittech/android-library'
-
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = project.ext.has("authId")?project.ext.authId:'uuxia'
-                        name = project.ext.has("authName")?project.ext.authName:'xiaxiaoli'
-                        email = project.ext.has("authEmail")?project.ext.authEmail:'xiaoli.xia@clife.cn'
-                    }
-                }
-                scm {
-                    connection = project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
-                    developerConnection = project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
-                    url = project.ext.has("url")?project.ext.url:'https://github.com/szhittech'
-                }
-            }
-        }
+def getMavenRelease() {
+    if (!project.hasProperty('maven.release')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.release=http://release.com'")
     }
+    return property('maven.release')
 }
 
+def getProjGroupId(){
+    if(!project.ext.has('groupId')){
+        throw new NullPointerException("Please Insert Code In library/build.gradle, Like This 'ext{ groupId = \"io.github.szhittech\" }'")
+    }
+    return project.ext.groupId
+}
+
+def getProjVersion(){
+    if(!project.ext.has('version')){
+        throw new NullPointerException("Please Insert Code In library/build.gradle, Like This 'ext{ version = \"0.0.0\" }'")
+    }
+    return project.ext.version// 库的当前版本
+}
+
+def getProjName(){
+    if(!project.ext.has('name')){
+        throw new NullPointerException("Please Insert Code In library/build.gradle, Like This 'ext{ name = \"clifesdk\" }'")
+    }
+    return project.ext.name
+}
+
+def getProjDescription(){
+    return project.ext.has("description")?project.ext.description:'A Library For java-library.'
+}
+def getProjUrl(){
+    return project.ext.has("url")?project.ext.url:'https://github.com/szhittech/java-library'
+}
+def getProjConnection(){
+    return project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
+}
+def getProjAuthorId(){
+    return project.ext.has("authId")?project.ext.authId:'uuxia'
+}
+def getProjAuthorName(){
+    return project.ext.has("authName")?project.ext.authName:'xiaxiaoli'
+}
+def getProjAuthorEmail(){
+    return project.ext.has("authEmail")?project.ext.authEmail:'xiaoli.xia@clife.cn'
+}
+
+def isSnapShot() {
+    return getProjVersion().toString().endsWith('SNAPSHOT') ? true : false
+}
 
 
 task dowloadSecret{
@@ -94,8 +88,70 @@ task dowloadSecret{
     project.ext.setProperty('signing.secretKeyRingFile',secretFile);
 }
 
+def download(String remoteUrl,String localUrl){
+    new File("$localUrl").withOutputStream {out->
+        new URL(remoteUrl).withInputStream {from-> out << from}
+    }
+}
 
-static def download(String url, String name) {
-    def file = new File(name)
-    file << new URL(url).openStream()
+group = getProjGroupId()
+version = getProjVersion()
+
+// 生成jar包的task
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+// 签名
+signing {
+    sign configurations.archives
+}
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: getMavenRelease()) {
+                authentication(userName: getMavenUserName(), password: getMavenPassWord())
+            }
+
+            snapshotRepository(url: getMavenSnapShot()) {
+                authentication(userName: getMavenUserName(), password: getMavenPassWord())
+            }
+
+            pom.project {
+                name =  getProjName()// 项目名称
+                packaging = 'aar'// 资源类型
+                artifactId = getProjName()// 库名
+                description = getProjDescription()
+                url = getProjUrl()
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = getProjAuthorId()
+                        name = getProjAuthorName()
+                        email = getProjAuthorEmail()
+                    }
+                }
+                scm {
+                    connection = getProjConnection()
+                    developerConnection = getProjConnection()
+                    url = getProjUrl()
+                }
+            }
+        }
+    }
 }

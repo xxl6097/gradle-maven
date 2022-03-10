@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 
 
-//apply plugin: 'clife.maven'
+//apply plugin: 'gradle.maven'
 //buildscript {
 //    repositories {
 //        jcenter()
@@ -14,14 +14,6 @@ apply plugin: 'com.android.library'
 //    dependencies {
 //        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
 //    }
-//}
-//
-//pubconfig {
-//    name = "hetandroidsdk"
-////    version = "1.0.0-SNAPSHOT"
-//    version = "0.0.3"
-//    description = "A Library For Android."
-//    url = "https://github.com/szhittech/hetjavasdk"
 //}
 
 android {
@@ -58,10 +50,10 @@ dependencies {
 ext {
     groupId = "io.github.szhittech"
     name = "android-library"
-//    version = "0.0.1-SNAPSHOT"
-    version = "1.0.2"
+    version = "0.0.1-SNAPSHOT"
+//    version = "1.0.3"
     description = "A Library For android-library."
     url = "https://github.com/szhittech/android-library"
 }
 
-apply from: '../android-publish.gradle'
+//apply from: '../android-publish.gradle'

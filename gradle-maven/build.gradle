@@ -12,13 +12,16 @@ dependencies {
 configurations.all {
   resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
-
+//https://clife-devops.coding.net/public-artifacts/public-repository/maven-snapshots/packages
+//https://clife-devops.coding.net/public-artifacts/public-repository/maven-releases/packages
+//https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-snapshots/
+//https://repo.maven.apache.org/maven2/io/github/szhittech/gradle-maven/
 ext {
   groupId = "io.github.szhittech"
   name = "gradle-maven"
-  version = "0.0.0-SNAPSHOT"
-//  version = "0.0.0"
-  description = "A Gradle Plugin For Clife"
+//  version = "0.0.0-SNAPSHOT"
+  version = "0.0.1"
+  description = "A Gradle Plugin For Java、Android、Kotlin."
   url = "https://e.coding.net/clife-devops/clifepublic/gradle-maven"
   connection = "https://e.coding.net/clife-devops/clifepublic/gradle-maven.git"
 }
@@ -33,5 +36,5 @@ task createReleasePropertiesFile(type:Exec) {
   file.write(fileContent)
 }
 
-apply from: 'local.gradle'//本地测试
-//apply from: '../java-publish.gradle'//发布maven center
+//apply from: 'local.gradle'//本地测试
+apply from: '../java-publish.gradle'//发布maven center

@@ -1,12 +1,21 @@
-plugins {
-    id 'java'
-}
+apply plugin: 'java'
+
+//apply plugin: 'gradle.maven'
+//buildscript {
+//    repositories {
+//        jcenter()
+//        maven {
+//            url uri('../repo')
+//        }
+//    }
+//    dependencies {
+//        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+//    }
+//}
+
+
 
 version 'unspecified'
-
-repositories {
-    mavenCentral()
-}
 jar {
     manifest {
         attributes(
@@ -28,10 +37,10 @@ test {
 ext {
     groupId = "io.github.szhittech"
     name = "java-library"
-//    version = "0.0.1-SNAPSHOT"
-    version = "0.0.4"
+    version = "0.0.1-SNAPSHOT"
+//    version = "0.0.4"
     description = "A Library For java-library."
     url = "https://github.com/szhittech/java-library"
 }
 
-apply from: '../java-publish.gradle'
+//apply from: '../java-publish.gradle'

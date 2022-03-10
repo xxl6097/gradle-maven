@@ -223,6 +223,9 @@ public class GradleMavenPlugin implements Plugin<Project> {
 
     }
     //
+    private boolean isSnapShot(String version) {
+        return version.endsWith("SNAPSHOT") ? true : false;
+    }
 
     private void taskFinally(final Project project, final MConfig extension) {
         final String name = extension.name;
@@ -239,8 +242,7 @@ public class GradleMavenPlugin implements Plugin<Project> {
                         DefaultMavenArtifactRepository defaultMavenArtifactRepository = (DefaultMavenArtifactRepository) artifactRepository;
                         String url = defaultMavenArtifactRepository.getUrl().toString();
 
-                        String libraryUrl = url + group.replaceAll("\\.", "/");
-                        libraryUrl+= "/" + name;
+
 
                         PasswordCredentials passwordCredentials = defaultMavenArtifactRepository.getCredentials(PasswordCredentials.class);
                         if (project.getPlugins().hasPlugin("java") || project.getPlugins().hasPlugin("java-library")) {
@@ -253,17 +255,32 @@ public class GradleMavenPlugin implements Plugin<Project> {
                             Logging.getLogger(getClass()).error("Unkonw Project.");
                         }
 
-                        Logging.getLogger(getClass()).error("The Library Url:{}", libraryUrl);
-                        if (url.equalsIgnoreCase(PropertyManager.getInstance().getEntity().maven.release)){
-                            Logging.getLogger(getClass()).error("\r\n##############################################################################");
-                            Logging.getLogger(getClass()).error("# First,Click Below Link To Login, And Second Do The Following Steps:        #");
-                            Logging.getLogger(getClass()).error("# {}          #",url);
-                            Logging.getLogger(getClass()).error("# Step 1: Click 'Staging Repositories' On The Left                           #");
-                            Logging.getLogger(getClass()).error("# Step 2: Click 'Refresh' On The Opened Tab,Name:'Staging Repositories'      #");
-                            Logging.getLogger(getClass()).error("# Step 3: In the selection list,Choose The Newest One(I Think You Known It)  #");
-                            Logging.getLogger(getClass()).error("# Step 4: Wait A Monment, If No Error,Pleanse Choose It And Click 'Release'  #");
-                            Logging.getLogger(getClass()).error("##############################################################################\r\n");
+                        if (url.contains("coding")){
+                            if (isSnapShot(extension.version)){
+                                url = "https://clife-devops.coding.net/public-artifacts/public-repository/maven-snapshots/packages";
+                            }else{
+                                url = "https://clife-devops.coding.net/public-artifacts/public-repository/maven-releases/packages";
+                            }
+                            Logging.getLogger(getClass()).error("The {} Url:{}", defaultMavenArtifactRepository.getName() ,url);
+                        }else{
+                            if (url.equalsIgnoreCase(PropertyManager.getInstance().getEntity().maven.release)){
+                                Logging.getLogger(getClass()).error("\r\n##############################################################################");
+                                Logging.getLogger(getClass()).error("# First,Click Below Link To Login, And Second Do The Following Steps:        #");
+                                Logging.getLogger(getClass()).error("# {}          #",url);
+                                Logging.getLogger(getClass()).error("# Step 1: Click 'Staging Repositories' On The Left                           #");
+                                Logging.getLogger(getClass()).error("# Step 2: Click 'Refresh' On The Opened Tab,Name:'Staging Repositories'      #");
+                                Logging.getLogger(getClass()).error("# Step 3: In the selection list,Choose The Newest One(I Think You Known It)  #");
+                                Logging.getLogger(getClass()).error("# Step 4: Wait A Monment, If No Error,Pleanse Choose It And Click 'Release'  #");
+                                Logging.getLogger(getClass()).error("##############################################################################\r\n");
+                            }else{
+                                Logging.getLogger(getClass()).error("The {} Url:{}", defaultMavenArtifactRepository.getName() ,url);
+                                String libraryUrl = url + group.replaceAll("\\.", "/");
+                                libraryUrl+= "/" + name;
+                                Logging.getLogger(getClass()).error("The Library Url:{}", libraryUrl);
+                            }
                         }
+
+
                         if (PropertyManager.getInstance().isDebug()) {
                             Logging.getLogger(getClass()).error("UserName:{}", passwordCredentials.getUsername());
                             Logging.getLogger(getClass()).error("PassWord:{}", passwordCredentials.getPassword());

@@ -1,18 +1,132 @@
+import javax.inject.Inject
+import java.util.function.Consumer
+
 apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
-group = project.ext.groupId// groupId
-version = project.ext.version// 库的当前版本
+def hasNexus() {
+    return project.hasProperty('nexus.name')
+}
+
+def getNexusName() {
+    if (!project.hasProperty('nexus.name')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'nexus.name=wahaha'")
+    }
+    return property('nexus.name')
+}
+
+def getNexusUserName() {
+    def name = getNexusName()
+    if (!project.hasProperty(name + '.username')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This '" + name +".username=wahaha'")
+    }
+    return property(name + '.username')
+}
+def getNexusPassWord() {
+    def name = getNexusName()
+    if (!project.hasProperty(name + '.password')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This '" + name +".password=wahaha'")
+    }
+    return property(name + '.password')
+}
+
+
+def getNexusSnapShot() {
+    def name = getNexusName()
+    if (!project.hasProperty(name + '.snapshot')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This '" + name +".snapshot=http://snapshot.com'")
+    }
+    return property(name + '.snapshot')
+}
+
+def getNexusRelease() {
+    def name = getNexusName()
+    if (!project.hasProperty(name + '.release')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This '" + name +".release=http://release.com'")
+    }
+    return property(name + '.release')
+}
+
+def getMavenUserName() {
+    if (!project.hasProperty('maven.username')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.username=wahaha'")
+    }
+    return property('maven.username')
+}
+
+def getMavenPassWord() {
+    if (!project.hasProperty('maven.password')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.password=hahahaha'")
+    }
+    return property('maven.password')
+}
+
+def getMavenSnapShot() {
+    if (!project.hasProperty('maven.snapshot')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.snapshot=http://snapshot.com'")
+    }
+    return property('maven.snapshot')
+}
+
+def getMavenRelease() {
+    if (!project.hasProperty('maven.release')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.release=http://release.com'")
+    }
+    return property('maven.release')
+}
+
+def getProjGroupId(){
+    if(!project.ext.has('groupId')){
+        throw new NullPointerException("Please Insert Code In library/build.gradle, Like This 'ext{ groupId = \"io.github.szhittech\" }'")
+    }
+    return project.ext.groupId
+}
+
+def getProjVersion(){
+    if(!project.ext.has('version')){
+        throw new NullPointerException("Please Insert Code In library/build.gradle, Like This 'ext{ version = \"0.0.0\" }'")
+    }
+    return project.ext.version// 库的当前版本
+}
+
+def getProjName(){
+    if(!project.ext.has('name')){
+        throw new NullPointerException("Please Insert Code In library/build.gradle, Like This 'ext{ name = \"clifesdk\" }'")
+    }
+    return project.ext.name
+}
+
+def getProjDescription(){
+    return project.ext.has("description")?project.ext.description:'A Library For java-library.'
+}
+def getProjUrl(){
+    return project.ext.has("url")?project.ext.url:'https://github.com/szhittech/java-library'
+}
+def getProjConnection(){
+    return project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
+}
+def getProjAuthorId(){
+    return project.ext.has("authId")?project.ext.authId:'uuxia'
+}
+def getProjAuthorName(){
+    return project.ext.has("authName")?project.ext.authName:'xiaxiaoli'
+}
+def getProjAuthorEmail(){
+    return project.ext.has("authEmail")?project.ext.authEmail:'xiaoli.xia@clife.cn'
+}
+
+def isSnapShot() {
+    return getProjVersion().toString().endsWith('SNAPSHOT') ? true : false
+}
+
+group = getProjGroupId()
+version = getProjVersion()
 
 tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
     options.addStringOption('encoding', 'UTF-8')
     options.addStringOption('charSet', 'UTF-8')
-}
-
-def getTest(){
-    return project.ext.name
 }
 
 java {
@@ -23,12 +137,12 @@ java {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = project.ext.name
+            artifactId = getProjName()
             from components.java
             pom {
-                name = project.ext.name
-                description project.ext.has("description")?project.ext.description:'A Library For java-library.'
-                url project.ext.has("url")?project.ext.url:'https://github.com/szhittech/java-library'
+                name = getProjName()
+                description = getProjDescription()
+                url = getProjUrl()
                 licenses {
                     license {
                         name = 'The Apache License, Version 2.0'
@@ -37,15 +151,15 @@ publishing {
                 }
                 developers {
                     developer {
-                        id = project.ext.has("authId")?project.ext.authId:'uuxia'
-                        name = project.ext.has("authName")?project.ext.authName:'xiaxiaoli'
-                        email = project.ext.has("authEmail")?project.ext.authEmail:'xiaoli.xia@clife.cn'
+                        id = getProjAuthorId()
+                        name = getProjAuthorName()
+                        email = getProjAuthorEmail()
                     }
                 }
                 scm {
-                    connection = project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
-                    developerConnection = project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
-                    url = project.ext.has("url")?project.ext.url:'https://github.com/szhittech'
+                    connection = getProjConnection()
+                    developerConnection = getProjConnection()
+                    url = getProjUrl()
                 }
 
             }
@@ -55,12 +169,13 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = property('maven.username')
-                password = property('maven.password')
+                username = getMavenUserName()
+                password = getMavenPassWord()
             }
-            def releasesRepoUrl = property('maven.release')
-            def snapshotsRepoUrl = property('maven.snapshot')
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            def releasesRepoUrl = getMavenRelease()
+            def snapshotsRepoUrl = getMavenSnapShot()
+            url = getProjVersion().toString().endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            //name = "MavenCenter"
         }
     }
 }
@@ -100,3 +215,100 @@ def download(String remoteUrl,String localUrl){
     }
 }
 
+
+project.tasks.getByName('publish').doLast {
+
+    PublishingExtension publishingExtension = project.extensions.getByType(PublishingExtension.class)
+    publishingExtension.repositories.forEach(new Consumer<ArtifactRepository>() {
+        @Override
+        void accept(ArtifactRepository artifactRepository) {
+            MavenArtifactRepository mavenArtifactRepository = (MavenArtifactRepository)artifactRepository
+            PasswordCredentials passwordCredentials = mavenArtifactRepository.getCredentials(PasswordCredentials.class)
+            String url = mavenArtifactRepository.getUrl().toString()
+            if (url.contains("coding")){
+                if (isSnapShot()){
+                    url = "https://clife-devops.coding.net/public-artifacts/public-repository/maven-snapshots/packages"
+                }else{
+                    url = "https://clife-devops.coding.net/public-artifacts/public-repository/maven-releases/packages"
+                }
+                Logging.getLogger(getClass()).error("The {} Url:{}", mavenArtifactRepository.getName() ,url)
+            }else{
+                if (url.equalsIgnoreCase(getMavenRelease())){
+                    Logging.getLogger(getClass()).error("\r\n##############################################################################");
+                    Logging.getLogger(getClass()).error("# First,Click Below Link To Login, And Second Do The Following Steps:        #");
+                    Logging.getLogger(getClass()).error("# {}          #",url);
+                    Logging.getLogger(getClass()).error("# Step 1: Click 'Staging Repositories' On The Left                           #");
+                    Logging.getLogger(getClass()).error("# Step 2: Click 'Refresh' On The Opened Tab,Name:'Staging Repositories'      #");
+                    Logging.getLogger(getClass()).error("# Step 3: In the selection list,Choose The Newest One(I Think You Known It)  #");
+                    Logging.getLogger(getClass()).error("# Step 4: Wait A Monment, If No Error,Pleanse Choose It And Click 'Release'  #");
+                    Logging.getLogger(getClass()).error("##############################################################################\r\n");
+                }else{
+                    Logging.getLogger(getClass()).error("The {} Url:{}", mavenArtifactRepository.getName() ,url)
+                    String group = getProjGroupId()
+                    String libraryUrl = url + group.replaceAll("\\.", "/")
+                    libraryUrl+= "/" + getProjName()
+                    Logging.getLogger(getClass()).error("The Library Url:{}", libraryUrl);
+                }
+            }
+
+
+            Logging.getLogger(getClass()).error("implementation '{}:{}:{}'", getProjGroupId(), getProjName(), getProjVersion())
+
+        }
+    })
+}
+
+
+task onCreate{
+    //Logging.getLogger(this.getClass()).error("onCreate...")
+    final Task taskPublish = project.getTasks().getByName("publish")
+    String mavenUrl = getProjVersion().toString().endsWith('SNAPSHOT') ? getMavenSnapShot() : getMavenRelease()
+    Task mavenTask = project.tasks.create("uploadToMaven",ChangeRepositoryTask.class,mavenUrl,getMavenUserName(),getMavenPassWord())
+    mavenTask.setGroup("upload")
+    mavenTask.finalizedBy(taskPublish)
+
+    if(hasNexus()){
+        String nexusUrl = getProjVersion().toString().endsWith('SNAPSHOT') ? getNexusSnapShot() : getNexusRelease()
+        def tName = "uploadTo" + captureName(getNexusName())
+        Task nexusTask = project.tasks.create(tName,ChangeRepositoryTask.class,nexusUrl,getNexusUserName(),getNexusPassWord())
+        nexusTask.setGroup("upload")
+        nexusTask.finalizedBy(taskPublish)
+    }
+}
+
+class ChangeRepositoryTask extends DefaultTask{
+    String url
+    String username
+    String password
+
+    @Inject
+    ChangeRepositoryTask(String url, String username, String password) {
+        this.url = url
+        this.username = username
+        this.password = password
+    }
+    @TaskAction
+    def action(){
+        //Logging.getLogger(this.getClass()).error(name)
+        PublishingExtension publishingExtension = project.extensions.getByType(PublishingExtension.class)
+        publishingExtension.repositories.forEach(new Consumer<ArtifactRepository>() {
+            @Override
+            void accept(ArtifactRepository artifactRepository) {
+                MavenArtifactRepository mavenArtifactRepository = (MavenArtifactRepository)artifactRepository
+                mavenArtifactRepository.setUrl(new URI(url))
+                PasswordCredentials passwordCredentials = mavenArtifactRepository.getCredentials(PasswordCredentials.class)
+                passwordCredentials.setUsername(username)
+                passwordCredentials.setPassword(password)
+                Logging.getLogger(getClass()).error("{} {} {}\r\n", name,mavenArtifactRepository.getName() ,mavenArtifactRepository.getUrl().toString())
+
+            }
+        })
+    }
+}
+
+static def captureName(String str) {
+    // 进行字母的ascii编码前移，效率要高于截取字符串进行转换的操作
+    char[] cs = str.toCharArray();
+    cs[0] -= 32;
+    return String.valueOf(cs);
+}
