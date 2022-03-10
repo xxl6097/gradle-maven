@@ -5,6 +5,11 @@
 
 ![gradle-publish-plugin.png](img/gradle-publish-plugin.png)
 
+### 最新版本
+
+```
+classpath 'io.github.szhittech:gradle-maven:0.0.1
+```
 
 ### 功能简介
 
@@ -12,6 +17,21 @@
 - 支持在新的gradle中依赖方式 `api / implementation`；
 - 支持签名库资源，`包括sources`、`Javadoc`、`POM`（需要`Gradle Version >= 4.8`）
 - 本插件内置了`signing`签名信息与文件(`secring.gpg`)
+
+### 使用步骤
+
+#### 1. 在根目录build.gradle中新增如下代码
+
+```
+classpath 'io.github.szhittech:gradle-maven:0.0.1'
+
+```
+
+#### 2. 在library/build.gradle中新增如下代码
+
+```
+apply plugin: 'gradle.maven'
+```
 
 ### 发布`MavenCenter`步骤
 
