@@ -36,17 +36,17 @@ ext {
 
 ```
 
-| 参数          | 必选                         | 描述                               |
-|:------------|:---------------------------|----------------------------------|
-| groupId     | <font color='red'>是</font> | 项目组织唯一的标识符                       |
-| name        | <font color='red'>是</font> | 项目名称                             |
-| version     | <font color='red'>是</font> | 项目版本。有-SNAPSHOT发布快照，没有发布release版 |
-| description | 否                          | 项目描述                             |
-| url         | 否                          | 项目地址                             |
-| connection  | 否                          | 项目地址                             |
-| authorId    | 否                          | 作者ID                             |
-| authorName  | 否                          | 作者姓名                             |
-| authorEmail | 否                          | 作者邮箱                             |
+| 参数          | 必选                         | 描述                                   |
+|:------------|:---------------------------|--------------------------------------|
+| groupId     | <font color='red'>是</font> | 项目组织唯一的标识符                           |
+| name        | <font color='red'>是</font> | 项目名称                                 |
+| version     | <font color='red'>是</font> | 项目版本。有`-SNAPSHOT`发布快照，没有发布`release`版 |
+| description | 否                          | 项目描述                                 |
+| url         | 否                          | 项目地址                                 |
+| connection  | 否                          | 项目地址                                 |
+| authorId    | 否                          | 作者ID                                 |
+| authorName  | 否                          | 作者姓名                                 |
+| authorEmail | 否                          | 作者邮箱                                 |
 
 #### 3. 执行发布任务
 
@@ -74,13 +74,13 @@ coding.snapshot=https://clife-devops-maven.pkg.coding.net/repository/public-repo
 coding.release=https://clife-devops-maven.pkg.coding.net/repository/public-repository/maven-releases/
 ```
 
-| 参数             | 必选  | 描述                               |
-|:---------------|:----|----------------------------------|
-| nexus.name     | 是   | 私服前缀名称，本例coding，下面字段就都以coding为前缀 |
-| nexus.username | 是   | 私服用户名                            |
-| nexus.password | 是   | 私服密码                             |
-| nexus.snapshot | 是   | 私服快照版上传地址                        |
-| nexus.release  | 是   | 私服release版上传地址                   |
+| 参数             | 必选  | 描述                                   |
+|:---------------|:----|--------------------------------------|
+| nexus.name     | 是   | 私服前缀名称，本例`coding`，下面字段就都以`coding`为前缀 |
+| nexus.username | 是   | 私服用户名                                |
+| nexus.password | 是   | 私服密码                                 |
+| nexus.snapshot | 是   | 私服快照版上传地址                            |
+| nexus.release  | 是   | 私服`release`版上传地址                     |
 
 
 #### 2. 配置`library/build.gradle`
@@ -100,17 +100,17 @@ ext {
 
 ```
 
-| 参数          | 必选                         | 描述                               |
-|:------------|:---------------------------|----------------------------------|
-| groupId     | <font color='red'>是</font> | 项目组织唯一的标识符                       |
-| name        | <font color='red'>是</font> | 项目名称                             |
-| version     | <font color='red'>是</font> | 项目版本。有-SNAPSHOT发布快照，没有发布release版 |
-| description | 否                          | 项目描述                             |
-| url         | 否                          | 项目地址                             |
-| connection  | 否                          | 项目地址                             |
-| authorId    | 否                          | 作者ID                             |
-| authorName  | 否                          | 作者姓名                             |
-| authorEmail | 否                          | 作者邮箱                             |
+| 参数          | 必选                         | 描述                                   |
+|:------------|:---------------------------|--------------------------------------|
+| groupId     | <font color='red'>是</font> | 项目组织唯一的标识符                           |
+| name        | <font color='red'>是</font> | 项目名称                                 |
+| version     | <font color='red'>是</font> | 项目版本。有`-SNAPSHOT`发布快照，没有发布`release`版 |
+| description | 否                          | 项目描述                                 |
+| url         | 否                          | 项目地址                                 |
+| connection  | 否                          | 项目地址                                 |
+| authorId    | 否                          | 作者ID                                 |
+| authorName  | 否                          | 作者姓名                                 |
+| authorEmail | 否                          | 作者邮箱                                 |
 
 #### 3. 执行发布任务
 
