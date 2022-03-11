@@ -33,7 +33,7 @@ ext {
   groupId = "io.github.szhittech"
   name = "gradle-maven"
 //  version = "0.0.0-SNAPSHOT"
-  version = "0.0.4"
+  version = "0.0.5"
   description = "A Gradle Plugin For Java、Android、Kotlin."
   url = "https://e.coding.net/clife-devops/clifepublic/gradle-maven"
   connection = "https://e.coding.net/clife-devops/clifepublic/gradle-maven.git"

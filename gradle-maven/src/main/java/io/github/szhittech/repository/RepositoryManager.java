@@ -15,7 +15,14 @@ import java.util.function.Consumer;
 
 public class RepositoryManager {
     private static RepositoryManager instance;
-    private List<RepositoryEntity> repositories = new ArrayList<>();
+    private static List<RepositoryEntity> repositories = new ArrayList<>();
+    static {
+        repositories.add(new RepositoryEntity("https://maven.aliyun.com/repository/central"));
+        repositories.add(new RepositoryEntity("https://maven.aliyun.com/repository/google"));
+        repositories.add(new RepositoryEntity("https://maven.aliyun.com/repository/jcenter"));
+        repositories.add(new RepositoryEntity("https://maven.aliyun.com/repository/public"));
+        repositories.add(new RepositoryEntity("https://s01.oss.sonatype.org/content/groups/public"));
+    }
 
     public static RepositoryManager getInstance() {
         if (instance == null) {
@@ -29,8 +36,6 @@ public class RepositoryManager {
     }
 
     public void loadRepositoreis(final Project project) {
-        repositories.add(PropertyManager.getInstance().getMaven_release());
-        repositories.add(PropertyManager.getInstance().getMaven_snapshot());
         RepositoryEntity release = PropertyManager.getInstance().getNexus_release();
         RepositoryEntity snapshot = PropertyManager.getInstance().getNexus_snapshot();
         String username = "xiaoli.xia@clife.cn";
@@ -51,6 +56,18 @@ public class RepositoryManager {
             @Override
             public void accept(RepositoryEntity entity) {
                 maven(project, entity);
+            }
+        });
+
+        project.allprojects(new Action<Project>() {
+            @Override
+            public void execute(final Project allproject) {
+                repositories.forEach(new Consumer<RepositoryEntity>() {
+                    @Override
+                    public void accept(RepositoryEntity entity) {
+                        maven(allproject, entity);
+                    }
+                });
             }
         });
 
