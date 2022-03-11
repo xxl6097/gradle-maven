@@ -12,7 +12,7 @@
 ### 一、最新版本
 
 ```
-classpath 'io.github.szhittech:gradle-maven:0.0.1
+classpath 'io.github.szhittech:gradle-maven:0.0.4
 ```
 
 ### 二、功能简介
@@ -27,7 +27,7 @@ classpath 'io.github.szhittech:gradle-maven:0.0.1
 #### 1. 在根目录build.gradle中新增如下代码
 
 ```
-classpath 'io.github.szhittech:gradle-maven:0.0.1'
+classpath 'io.github.szhittech:gradle-maven:0.0.4'
 
 ```
 
