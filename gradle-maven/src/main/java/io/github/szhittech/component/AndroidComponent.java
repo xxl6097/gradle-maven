@@ -1,9 +1,13 @@
 package io.github.szhittech.component;
 
 import com.android.build.gradle.LibraryExtension;
+import com.android.build.gradle.api.AndroidSourceDirectorySet;
+import com.android.build.gradle.api.AndroidSourceSet;
+import com.android.build.gradle.api.LibraryVariant;
 import groovy.util.Node;
 import io.github.szhittech.component.base.BaseComponent;
 import io.github.szhittech.extension.MConfig;
+import kotlin.jvm.internal.Intrinsics;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -12,11 +16,19 @@ import org.gradle.api.XmlProvider;
 import org.gradle.api.artifacts.ExcludeRule;
 import org.gradle.api.artifacts.ModuleDependency;
 import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.internal.DefaultDomainObjectSet;
 import org.gradle.api.publish.maven.MavenPom;
 import org.gradle.api.publish.maven.MavenPublication;
+import org.gradle.api.tasks.TaskOutputFilePropertyBuilder;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.javadoc.Javadoc;
+import org.gradle.external.javadoc.MinimalJavadocOptions;
+import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
+import java.io.File;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class AndroidComponent extends BaseComponent {
@@ -25,7 +37,7 @@ public class AndroidComponent extends BaseComponent {
 
     public AndroidComponent(Project project) {
         super(project);
-        System.err.println("---->" + android.getClass().toString());
+        //System.err.println("---->" + android.getClass().toString());
     }
 
     @Override
@@ -45,16 +57,38 @@ public class AndroidComponent extends BaseComponent {
     @Override
     protected Object docJar() {
         Javadoc androidJavaDocs = project.getTasks().create("androidJavadocs", Javadoc.class);
-        androidJavaDocs.setSource(android.getSourceSets().getByName("main").getJava().getSrcDirs());
-//        androidJavaDocs.classpath += project.files("${android.bootClasspath}${File.pathSeparator}");
-        ConfigurableFileCollection classpath = project.files(androidJavaDocs.getClasspath().getAsPath() + "${android.bootClasspath}${File.pathSeparator}");
-        androidJavaDocs.setClasspath(classpath);
+        AndroidSourceSet sourceSet = android.getSourceSets().getByName("main");
+        androidJavaDocs.setSource(sourceSet.getJava().getSrcDirs());
+        List<File> bootClasspath = android.getBootClasspath();
+        Object[] objs = new Object[]{bootClasspath + File.pathSeparator};
+        ConfigurableFileCollection files = project.files(objs);
+        androidJavaDocs.getClasspath().plus(files);
+        android.getLibraryVariants();
+
+        DefaultDomainObjectSet<LibraryVariant> list = android.getLibraryVariants();
+        FileCollection classpath = list.stream().findAny().get().getJavaCompile().getClasspath();
+        androidJavaDocs.getClasspath().plus(classpath);
+        TaskOutputFilePropertyBuilder outfiels = list.stream().findAny().get().getJavaCompile().getOutputs().files();
+        androidJavaDocs.getClasspath().plus(project.files(outfiels));
+
 
         Jar androidJavaDocsJar = project.getTasks().create("androidJavaDocsJar", Jar.class);
         androidJavaDocsJar.setClassifier("javadoc");
         androidJavaDocsJar.from(androidJavaDocs.getDestinationDir());
         androidJavaDocsJar.dependsOn(androidJavaDocs);
         return androidJavaDocsJar;
+
+//        Javadoc androidJavaDocs = (Javadoc)this.project.getTasks().create("androidJavadocs", Javadoc.class);
+//        Object tmp37_32 = this.android.getSourceSets().getByName("main"); Intrinsics.checkExpressionValueIsNotNull(tmp37_32, "android.sourceSets.getByName(\"main\")");
+//        AndroidSourceDirectorySet tmp51_46 = ((AndroidSourceSet)tmp37_32).getJava(); Intrinsics.checkExpressionValueIsNotNull(tmp51_46, "android.sourceSets.getByName(\"main\").java"); androidJavaDocs.setSource(tmp51_46.getSrcDirs());
+//        Javadoc tmp66_65 = androidJavaDocs; Intrinsics.checkExpressionValueIsNotNull(tmp66_65, "androidJavaDocs");
+//        Javadoc tmp72_66 = tmp66_65; tmp72_66.setClasspath(tmp72_66.getClasspath().plus((FileCollection)this.project.files(new Object[] { this.android.getBootClasspath() + File.pathSeparator })));
+//
+//        Jar androidJavaDocsJar = (Jar)this.project.getTasks().create("androidJavaDocsJar", Jar.class);
+//        Jar tmp152_151 = androidJavaDocsJar; Intrinsics.checkExpressionValueIsNotNull(tmp152_151, "androidJavaDocsJar"); tmp152_151.setClassifier("javadoc");
+//        androidJavaDocsJar.from(new Object[] { androidJavaDocs.getDestinationDir() });
+//        androidJavaDocsJar.dependsOn(new Object[] { androidJavaDocs });
+//        return androidJavaDocsJar;
     }
 
     @Override
@@ -142,6 +176,17 @@ public class AndroidComponent extends BaseComponent {
             }
 
         }
+    }
+
+    private void addOptions(Javadoc javadoc){
+        javadoc.options(new Action<MinimalJavadocOptions>() {
+            @Override
+            public void execute(MinimalJavadocOptions minimalJavadocOptions) {
+                StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) minimalJavadocOptions;
+                options.addStringOption("Xdoclint:none", "-quiet");
+                options.addStringOption("encoding", "UTF-8");
+            }
+        });
     }
 
 }

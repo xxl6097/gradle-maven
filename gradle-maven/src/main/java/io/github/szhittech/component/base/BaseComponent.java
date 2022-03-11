@@ -29,22 +29,6 @@ public abstract class BaseComponent {
             mavenPublication.artifact(sourcesJar());
         }
 
-        TaskCollection<Javadoc> javadocs = project.getTasks().withType(Javadoc.class);
-        javadocs.forEach(new Consumer<Javadoc>() {
-            @Override
-            public void accept(Javadoc javadoc) {
-                javadoc.options(new Action<MinimalJavadocOptions>() {
-                    @Override
-                    public void execute(MinimalJavadocOptions minimalJavadocOptions) {
-                        StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) minimalJavadocOptions;
-                        options.addStringOption("Xdoclint:none", "-quiet");
-                        options.addStringOption("encoding", "UTF-8");
-                        options.addStringOption("charSet", "UTF-8");
-                    }
-                });
-            }
-        });
-
         if (config.javaDocEnabled) {
             mavenPublication.artifact(docJar());
         }
@@ -109,4 +93,5 @@ public abstract class BaseComponent {
 
         return null;
     }
+
 }

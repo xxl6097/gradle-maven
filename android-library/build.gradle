@@ -1,21 +1,6 @@
 apply plugin: 'com.android.library'
 
 
-
-apply plugin: 'gradle.maven'
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            url uri('../repo')
-        }
-
-    }
-    dependencies {
-        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
-    }
-}
-
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
@@ -45,9 +30,18 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation "com.android.support:support-annotations:28.0.0"
+
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
+    implementation "androidx.exifinterface:exifinterface:1.3.0"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }
 
 ext {
+//    javaDocEnabled = false
     groupId = "io.github.szhittech"
     name = "android-library"
     version = "0.0.1-SNAPSHOT"
@@ -55,5 +49,56 @@ ext {
     description = "A Library For android-library."
     url = "https://github.com/szhittech/android-library"
 }
-
 //apply from: '../android-publish.gradle'
+apply plugin: 'gradle.maven'
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url uri('../repo')
+        }
+
+    }
+    dependencies {
+        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+    }
+}
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.whl:gradle-publish-plugin:0.1.16-SNAPSHOT"
+    }
+}
+//
+//apply plugin: "com.whl.gradle-publish-plugin"
+//group 'io.github.szhittech'
+//version '0.0.1-SNAPSHOT'
+//gradlePublish {
+//    sourceJarEnabled = true
+//    javaDocEnabled = true
+//    signEnabled = true
+//
+//    releaseRepository {
+//        url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+//        userName = "szhittech"
+//        password = "het123456"
+//    }
+//
+//    snapshotRepository {
+//        url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+//        userName = "szhittech"
+//        password = "het123456"
+//    }
+//
+//}
+
+task aaa{
+    def list = [1,2,4]
+    def str =list.join(",")
+    println('-------->'+str)
+}
