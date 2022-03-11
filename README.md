@@ -1,12 +1,11 @@
-## Gradle发布MavenCenter和Nexus私服插件
+## `Gradle`发布`MavenCenter`和`Nexus`私服插件
 
 基于`Java`语言与`Gradle Api`开发的`Gradle Plugin`，本`Gradle插件`可以让你的`library`发布到`MavenCenter`和自己的`nexus`私服变得非常容易。
+内置了阿里云`Maven`中央仓库，其中配置了`aliyun`代理的`central`、`jcenter`、`google`。
 
 ![gradle-publish-plugin.png](img/gradle-publish-plugin.png)
 
 <!--more-->
-
-
 
 
 ### 一、最新版本
@@ -18,20 +17,20 @@ classpath 'io.github.szhittech:gradle-maven:0.0.5
 ### 二、功能简介
 
 - 支持发布多种类型的库, 例如：`Java`、`Android`、`Kotlin`；
-- 支持在新的gradle中依赖方式 `api / implementation`；
+- 支持在新的`gradle`中依赖方式 `api / implementation`；
 - 支持签名库资源，`包括sources`、`Javadoc`、`POM`（需要`Gradle Version >= 4.8`）
 - 本插件内置了`signing`签名信息与文件(`secring.gpg`)
 
 ### 三、使用步骤
 
-#### 1. 在根目录build.gradle中新增如下代码
+#### 1. 在根目录`build.gradle`中新增如下代码
 
 ```
 classpath 'io.github.szhittech:gradle-maven:0.0.5'
 
 ```
 
-#### 2. 在library/build.gradle中新增如下代码
+#### 2. 在`library/build.gradle`中新增如下代码
 
 ```
 apply plugin: 'gradle.maven'
