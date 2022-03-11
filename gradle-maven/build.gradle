@@ -2,6 +2,19 @@ apply plugin: 'java'//导入java插件用于，编译打包我们的插件
 apply plugin: 'groovy'
 
 
+apply plugin: 'gradle.maven'
+buildscript {
+  repositories {
+    jcenter()
+    maven {
+      url uri('../repo')
+    }
+  }
+  dependencies {
+    classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+  }
+}
+
 dependencies {
   implementation gradleApi()
   implementation localGroovy()
@@ -20,7 +33,7 @@ ext {
   groupId = "io.github.szhittech"
   name = "gradle-maven"
 //  version = "0.0.0-SNAPSHOT"
-  version = "0.0.1"
+  version = "0.0.4"
   description = "A Gradle Plugin For Java、Android、Kotlin."
   url = "https://e.coding.net/clife-devops/clifepublic/gradle-maven"
   connection = "https://e.coding.net/clife-devops/clifepublic/gradle-maven.git"
@@ -30,11 +43,11 @@ ext {
 task createReleasePropertiesFile(type:Exec) {
   String fileName = 'maven.plugin.release.properties'
   //println 'Creating $fileName'
-  String fileContent = "version=" + project.version
+  String fileContent = "version=" + project.ext.version
   //println fileContent
   File file = new File("$projectDir/src/main/resources/$fileName")
   file.write(fileContent)
 }
 
 //apply from: 'local.gradle'//本地测试
-apply from: '../java-publish.gradle'//发布maven center
+//apply from: '../java-publish.gradle'//发布maven center

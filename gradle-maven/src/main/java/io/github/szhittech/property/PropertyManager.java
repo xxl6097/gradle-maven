@@ -1,5 +1,7 @@
 package io.github.szhittech.property;
 
+import io.github.szhittech.repository.RepositoryEntity;
+import io.github.szhittech.util.StringUtils;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
@@ -7,8 +9,11 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 public class PropertyManager {
     private static PropertyManager instance;
     private ExtraPropertiesExtension extraProperties = null;
-    private PropertiesEntity entity = null;
     private boolean isDebug = false;
+    private RepositoryEntity maven_release = new RepositoryEntity();
+    private RepositoryEntity maven_snapshot = new RepositoryEntity();
+    private RepositoryEntity nexus_snapshot = null;
+    private RepositoryEntity nexus_release = null;
 
     public static PropertyManager getInstance() {
         if (instance == null) {
@@ -21,125 +26,124 @@ public class PropertyManager {
         return instance;
     }
 
-    public PropertiesEntity getEntity() {
-        return entity;
+    public RepositoryEntity getMaven_release() {
+        return maven_release;
+    }
+
+    public RepositoryEntity getMaven_snapshot() {
+        return maven_snapshot;
+    }
+
+    public RepositoryEntity getNexus_snapshot() {
+        return nexus_snapshot;
+    }
+
+    public RepositoryEntity getNexus_release() {
+        return nexus_release;
     }
 
     public boolean isDebug() {
         return isDebug;
     }
 
+    private String getString(String key){
+        if (extraProperties.has(key)) {
+            Object string = extraProperties.get(key);
+            if (string != null && string instanceof String) {
+                return (String) string;
+            }
+        }
+        return null;
+    }
+
     public void init(Project project) {
         extraProperties = project.getExtensions().getExtraProperties();
-        entity = new PropertiesEntity();
 
         isDebug = extraProperties.has("debug");
 
-        entity.maven.name = "maven";
-        if (extraProperties.has(entity.maven.name + ".username")) {
-            Object string = extraProperties.get(entity.maven.name+".username");
-            if (string != null && string instanceof String) {
-                entity.maven.username = (String) string;
-            }
-        } else {
-            entity.maven.username = "szhittech";
-        }
+        String maveName = "maven";
+        maven_release.setName("maven");
+        maven_snapshot.setName("maven");
 
-        if (extraProperties.has(entity.maven.name+".password")) {
-            Object string = extraProperties.get(entity.maven.name+".password");
-            if (string != null && string instanceof String) {
-                entity.maven.password = (String) string;
-            }
-        } else {
-            entity.maven.password = "het123456";
-        }
+        String destValue = "szhittech";
+        String key = maveName + ".username";
 
-        if (extraProperties.has(entity.maven.name+".snapshot")) {
-            Object string = extraProperties.get(entity.maven.name+".snapshot");
-            if (string != null && string instanceof String) {
-                entity.maven.snapshot = (String) string;
-            }
-        } else {
-            entity.maven.snapshot = "https://s01.oss.sonatype.org/content/repositories/snapshots/";
-        }
+        destValue = StringUtils.isStringEmpty(getString(key))?destValue:getString(key);
+        maven_release.setUsername(destValue);
+        maven_snapshot.setUsername(destValue);
+        destValue = null;
 
-        if (extraProperties.has(entity.maven.name+".release")) {
-            Object string = extraProperties.get(entity.maven.name+".release");
-            if (string != null && string instanceof String) {
-                entity.maven.release = (String) string;
-            }
-        } else {
-            entity.maven.release = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/";
-        }
+        destValue = "het123456";
+        key = maveName + ".password";
+        destValue = StringUtils.isStringEmpty(getString(key))?destValue:getString(key);
+        maven_release.setPassword(destValue);
+        maven_snapshot.setPassword(destValue);
+        destValue = null;
+
+        destValue = "https://s01.oss.sonatype.org/content/repositories/snapshots/";
+        key = maveName + ".snapshot";
+        destValue = StringUtils.isStringEmpty(getString(key))?destValue:getString(key);
+        maven_snapshot.setRepositoryUrl(destValue);
+        destValue = null;
+
+        destValue = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/";
+        key = maveName + ".release";
+        destValue = StringUtils.isStringEmpty(getString(key))?destValue:getString(key);
+        maven_release.setRepositoryUrl(destValue);
+        destValue = null;
+
+
 
         //私服
         if (extraProperties.has("nexus.name")) {
             Object object = extraProperties.get("nexus.name");
             if (object != null && object instanceof String) {
-                entity.nexus.name = (String) object;
-                if (extraProperties.has(entity.nexus.name + ".username")) {
-                    Object string = extraProperties.get(entity.nexus.name + ".username");
-                    if (string != null && string instanceof String) {
-                        entity.nexus.username = (String) string;
-                    }
+                maveName = (String) object;
+
+                key = maveName + ".username";
+                destValue = StringUtils.isStringEmpty(getString(key))?destValue:getString(key);
+                if (!StringUtils.isStringEmpty(destValue)){
+                    nexus_snapshot = new RepositoryEntity();
+                    nexus_release = new RepositoryEntity();
+                    nexus_release.setName(maveName);
+                    nexus_snapshot.setName(maveName);
+
+                    nexus_snapshot.setUsername(destValue);
+                    nexus_release.setUsername(destValue);
+                    destValue = null;
+
+                    key = maveName + ".password";
+                    destValue = StringUtils.isStringEmpty(getString(key))?destValue:getString(key);
+                    nexus_snapshot.setPassword(destValue);
+                    nexus_release.setPassword(destValue);
+                    destValue = null;
+
+                    key = maveName + ".snapshot";
+                    destValue = StringUtils.isStringEmpty(getString(key))?destValue:getString(key);
+                    nexus_snapshot.setRepositoryUrl(destValue);
+                    destValue = null;
+
+                    key = maveName + ".release";
+                    destValue = StringUtils.isStringEmpty(getString(key))?destValue:getString(key);
+                    nexus_release.setRepositoryUrl(destValue);
+                    destValue = null;
                 }
-                if (extraProperties.has(entity.nexus.name + ".password")) {
-                    Object string = extraProperties.get(entity.nexus.name + ".password");
-                    if (string != null && string instanceof String) {
-                        entity.nexus.password = (String) string;
-                    }
-                }
-                if (extraProperties.has(entity.nexus.name + ".snapshot")) {
-                    Object string = extraProperties.get(entity.nexus.name + ".snapshot");
-                    if (string != null && string instanceof String) {
-                        entity.nexus.snapshot = (String) string;
-                    }
-                }
-                if (extraProperties.has(entity.nexus.name + ".release")) {
-                    Object string = extraProperties.get(entity.nexus.name + ".release");
-                    if (string != null && string instanceof String) {
-                        entity.nexus.release = (String) string;
-                    }
-                }
+
+
             }
         }
 
         if (isDebug){
-            Logging.getLogger(getClass()).error("maven:{}",entity.maven.toString());
-            Logging.getLogger(getClass()).error("nexus:{}",entity.nexus.toString());
+            Logging.getLogger(getClass()).error("maven_release:{}",maven_release.toString());
+            Logging.getLogger(getClass()).error("maven_snapshot:{}",maven_snapshot.toString());
+            if (nexus_release != null){
+                Logging.getLogger(getClass()).error("nexus_release:{}",nexus_release.toString());
+            }
+            if (nexus_snapshot != null){
+                Logging.getLogger(getClass()).error("nexus_snapshot:{}",nexus_snapshot.toString());
+            }
         }
 
     }
 
-
-    public class PropertiesEntity {
-        public MavenRepository maven = new MavenRepository();
-        public MavenRepository nexus = new MavenRepository();
-    }
-
-    public class MavenRepository {
-        public String name = null;
-        public String snapshot = null;
-        public String release = null;
-        public String username = null;
-        public String password = null;
-
-        public String getUrl(String version) {
-            return version.endsWith("-SNAPSHOT") ? snapshot : release;
-        }
-
-        public String geReversetUrl(String version) {
-            return version.endsWith("-SNAPSHOT") ? release : snapshot;
-        }
-
-        @Override
-        public String toString() {
-            return "MavenRepository{" +
-                    "snapshot='" + snapshot + '\'' +
-                    ", release='" + release + '\'' +
-                    ", username='" + username + '\'' +
-                    ", password='" + password + '\'' +
-                    '}';
-        }
-    }
 }

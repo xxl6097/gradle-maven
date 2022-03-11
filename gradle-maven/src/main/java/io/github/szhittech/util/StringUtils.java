@@ -23,6 +23,8 @@ public class StringUtils {
         return String.valueOf(cs);
     }
 
-
+    public static boolean isSnapShot(String version) {
+        return version.endsWith("SNAPSHOT") ? true : false;
+    }
 
 }

@@ -22,8 +22,16 @@ public class SecringUtil {
                 etx.setProperty("signing.keyId","FB58CB54");
                 etx.setProperty("signing.password","2475431305");
                 InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("secring.gpg");
-                String secring = project.getBuildDir().getPath() + File.separator + "secring.gpg";
+                File gradleUserDir = project.getGradle().getGradleUserHomeDir();
+                String choMengDir = gradleUserDir.getAbsolutePath() + File.separator + "chomeng";
+                File chFile = new File(choMengDir);
+                if (!chFile.exists()){
+                    chFile.mkdirs();
+                }
+                String secring = choMengDir + File.separator + "secring.gpg";
                 try {
+                    File sfile = new File(secring);
+                    sfile.deleteOnExit();
                     writeToLocal(secring,inputStream);
                     etx.setProperty("signing.secretKeyRingFile",secring);
                 } catch (IOException e) {

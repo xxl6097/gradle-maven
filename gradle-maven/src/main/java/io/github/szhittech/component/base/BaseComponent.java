@@ -22,14 +22,14 @@ public abstract class BaseComponent {
         this.project = project;
     }
 
-    public void buildComponent(MavenPublication mavenPublication, MConfig extension){
+    public void buildComponent(MavenPublication mavenPublication, MConfig config){
         fromComponent(mavenPublication);
 
-        if (extension.sourceJarEnabled) {
+        if (config.sourceJarEnabled) {
             mavenPublication.artifact(sourcesJar());
         }
 
-        TaskCollection<Javadoc> javadocs  =project.getTasks().withType(Javadoc.class);
+        TaskCollection<Javadoc> javadocs = project.getTasks().withType(Javadoc.class);
         javadocs.forEach(new Consumer<Javadoc>() {
             @Override
             public void accept(Javadoc javadoc) {
@@ -45,11 +45,11 @@ public abstract class BaseComponent {
             }
         });
 
-        if (extension.javaDocEnabled) {
+        if (config.javaDocEnabled) {
             mavenPublication.artifact(docJar());
         }
 
-        withPom(mavenPublication,extension);
+        withPom(mavenPublication,config);
     }
 
     protected abstract void fromComponent(MavenPublication mavenPublication);
@@ -58,13 +58,13 @@ public abstract class BaseComponent {
 
     protected abstract Object sourcesJar();
 
-    protected Object withPom(final MavenPublication mavenPublication, final MConfig extension) {
+    protected Object withPom(final MavenPublication mavenPublication, final MConfig config) {
         mavenPublication.pom(new Action<MavenPom>() {
             @Override
             public void execute(MavenPom mavenPom) {
-                mavenPom.getName().set(extension.name);
-                mavenPom.getDescription().set(extension.description);
-                mavenPom.getUrl().set(extension.url);
+                mavenPom.getName().set(config.name);
+                mavenPom.getDescription().set(config.description);
+                mavenPom.getUrl().set(config.url);
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                 Calendar calendar = Calendar.getInstance();
                 String dateName = df.format(calendar.getTime());
@@ -73,9 +73,9 @@ public abstract class BaseComponent {
                 mavenPom.scm(new Action<MavenPomScm>() {
                     @Override
                     public void execute(MavenPomScm mavenPomScm) {
-                        mavenPomScm.getConnection().set(extension.connection);
-                        mavenPomScm.getUrl().set(extension.url);
-                        mavenPomScm.getDeveloperConnection().set(extension.connection);
+                        mavenPomScm.getConnection().set(config.connection);
+                        mavenPomScm.getUrl().set(config.url);
+                        mavenPomScm.getDeveloperConnection().set(config.connection);
                     }
                 });
                 mavenPom.developers(new Action<MavenPomDeveloperSpec>() {
@@ -84,9 +84,9 @@ public abstract class BaseComponent {
                         mavenPomDeveloperSpec.developer(new Action<MavenPomDeveloper>() {
                             @Override
                             public void execute(MavenPomDeveloper mavenPomDeveloper) {
-                                mavenPomDeveloper.getId().set(extension.authorId);
-                                mavenPomDeveloper.getName().set(extension.authorName);
-                                mavenPomDeveloper.getEmail().set(extension.authorEmail);
+                                mavenPomDeveloper.getId().set(config.authorId);
+                                mavenPomDeveloper.getName().set(config.authorName);
+                                mavenPomDeveloper.getEmail().set(config.authorEmail);
                             }
                         });
                     }
@@ -98,7 +98,7 @@ public abstract class BaseComponent {
                             @Override
                             public void execute(MavenPomLicense mavenPomLicense) {
                                 mavenPomLicense.getUrl().set("http://www.apache.org/licenses/LICENSE-2.0.txt");
-                                mavenPomLicense.getDistribution().set(extension.description);
+                                mavenPomLicense.getDistribution().set(config.description);
                                 mavenPomLicense.getName().set("The Apache License, Version 2.0");
                             }
                         });

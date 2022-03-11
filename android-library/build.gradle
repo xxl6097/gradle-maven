@@ -2,19 +2,19 @@ apply plugin: 'com.android.library'
 
 
 
-//apply plugin: 'gradle.maven'
-//buildscript {
-//    repositories {
-//        jcenter()
-//        maven {
-//            url uri('../repo')
-//        }
-//
-//    }
-//    dependencies {
-//        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
-//    }
-//}
+apply plugin: 'gradle.maven'
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url uri('../repo')
+        }
+
+    }
+    dependencies {
+        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+    }
+}
 
 android {
     compileSdkVersion 29
