@@ -27,7 +27,6 @@ public class GradleMavenPlugin implements Plugin<Project> {
                 PublishManager.getInstance().configurePublishing(project,config);
             }
         });
-        //1。2。11。33。34。。35。36。37。38。45
     }
 
 }

@@ -1,35 +1,32 @@
 package io.github.szhittech.component;
 
 import com.android.build.gradle.LibraryExtension;
-import com.android.build.gradle.api.AndroidSourceDirectorySet;
 import com.android.build.gradle.api.AndroidSourceSet;
 import com.android.build.gradle.api.LibraryVariant;
-import groovy.util.Node;
-import io.github.szhittech.component.base.BaseComponent;
-import io.github.szhittech.extension.MConfig;
-import kotlin.jvm.internal.Intrinsics;
+
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.XmlProvider;
+import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.ExcludeRule;
 import org.gradle.api.artifacts.ModuleDependency;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.DefaultDomainObjectSet;
 import org.gradle.api.publish.maven.MavenPom;
 import org.gradle.api.publish.maven.MavenPublication;
-import org.gradle.api.tasks.TaskOutputFilePropertyBuilder;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.javadoc.Javadoc;
+import org.gradle.external.javadoc.JavadocMemberLevel;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
+
+import groovy.util.Node;
+import io.github.szhittech.component.base.BaseComponent;
+import io.github.szhittech.extension.MConfig;
 
 public class AndroidComponent extends BaseComponent {
 
@@ -52,24 +49,47 @@ public class AndroidComponent extends BaseComponent {
             bundleReleaseAar = project.getTasks().getByName("bundleRelease");
         }
         mavenPublication.artifact(bundleReleaseAar);
+
     }
 
     @Override
     protected Object docJar() {
-        Javadoc androidJavaDocs = project.getTasks().create("androidJavadocs", Javadoc.class);
-        AndroidSourceSet sourceSet = android.getSourceSets().getByName("main");
+        final Javadoc androidJavaDocs = project.getTasks().create("androidJavadocs", Javadoc.class);
+        androidJavaDocs.setEnabled(false);
+        androidJavaDocs.setFailOnError(false);
+        addOptions(androidJavaDocs);
+        AndroidSourceSet sourceSet =  android.getSourceSets().getByName("main");//AndroidSourceSet
         androidJavaDocs.setSource(sourceSet.getJava().getSrcDirs());
+//        List<File> bootClasspath = android.getBootClasspath();
+//        Object[] objs = new Object[]{bootClasspath + File.pathSeparator};
+//        ConfigurableFileCollection files = project.files(objs);
+//        androidJavaDocs.getClasspath().plus(files);
+//        android.getLibraryVariants().forEach(new Consumer<LibraryVariant>() {
+//            @Override
+//            public void accept(LibraryVariant libraryVariant) {
+//                androidJavaDocs.getClasspath().plus(project.files(libraryVariant.getJavaCompile().getOutputs().files()));
+//            }
+//        });
+
+//        DefaultDomainObjectSet<LibraryVariant> list = android.getLibraryVariants();
+//        FileCollection classpath = list.stream().findAny().get().getJavaCompile().getClasspath();
+//        androidJavaDocs.getClasspath().plus(classpath);
+//        TaskOutputFilePropertyBuilder outfiels = list.stream().findAny().get().getJavaCompile().getOutputs().files();
+//        androidJavaDocs.getClasspath().plus(project.files(outfiels));
+
         List<File> bootClasspath = android.getBootClasspath();
         Object[] objs = new Object[]{bootClasspath + File.pathSeparator};
-        ConfigurableFileCollection files = project.files(objs);
-        androidJavaDocs.getClasspath().plus(files);
-        android.getLibraryVariants();
-
-        DefaultDomainObjectSet<LibraryVariant> list = android.getLibraryVariants();
-        FileCollection classpath = list.stream().findAny().get().getJavaCompile().getClasspath();
-        androidJavaDocs.getClasspath().plus(classpath);
-        TaskOutputFilePropertyBuilder outfiels = list.stream().findAny().get().getJavaCompile().getOutputs().files();
-        androidJavaDocs.getClasspath().plus(project.files(outfiels));
+        androidJavaDocs.getClasspath().plus(project.files(objs));
+        DefaultDomainObjectSet<LibraryVariant> variants = android.getLibraryVariants();
+        variants.all(new Action<LibraryVariant>() {
+            @Override
+            public void execute(LibraryVariant variant) {
+                if (variant.getName().equalsIgnoreCase("release")) {
+                    androidJavaDocs.getClasspath().plus(variant.getJavaCompileProvider().get().getClasspath());
+                }
+            }
+        });
+        androidJavaDocs.exclude("**/R.html", "**/R.*.html", "**/index.html");
 
 
         Jar androidJavaDocsJar = project.getTasks().create("androidJavaDocsJar", Jar.class);
@@ -185,6 +205,11 @@ public class AndroidComponent extends BaseComponent {
                 StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) minimalJavadocOptions;
                 options.addStringOption("Xdoclint:none", "-quiet");
                 options.addStringOption("encoding", "UTF-8");
+                options.addStringOption("charSet", "UTF-8");
+                options.addStringOption("locale", "en_US");
+                options.setMemberLevel(JavadocMemberLevel.PUBLIC);
+                options.charSet("UTF-8");
+                options.docEncoding("UTF-8");
             }
         });
     }

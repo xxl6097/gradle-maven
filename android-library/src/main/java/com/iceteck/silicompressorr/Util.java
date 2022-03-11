@@ -31,8 +31,6 @@ public class Util {
 //                +now.get(Calendar.HOUR_OF_DAY) +":"
 //                +now.get(Calendar.MINUTE) + ":"
 //                +now.get(Calendar.SECOND)
-//                + " 周: " + now.get(Calendar.DAY_OF_WEEK) + " "+Calendar.SATURDAY);
-        //System.out.println("当前时间毫秒数：" + now.getTimeInMillis());
         return now;
 
     }

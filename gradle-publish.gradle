@@ -1,0 +1,288 @@
+/*
+ * Copyright 2013 Chris Banes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+
+def getProjGroupId(){
+    if(!project.ext.has('groupId')){
+        throw new NullPointerException("Please Insert Code In library/build.gradle, Like This 'ext{ groupId = \"io.github.szhittech\" }'")
+    }
+    return project.ext.groupId
+}
+
+def getProjVersion(){
+    if(!project.ext.has('version')){
+        throw new NullPointerException("Please Insert Code In library/build.gradle, Like This 'ext{ version = \"0.0.0\" }'")
+    }
+    return project.ext.version// 库的当前版本
+}
+
+def getProjName(){
+    if(!project.ext.has('name')){
+        throw new NullPointerException("Please Insert Code In library/build.gradle, Like This 'ext{ name = \"clifesdk\" }'")
+    }
+    return project.ext.name
+}
+
+version = getProjVersion()
+group = getProjGroupId()
+
+def isReleaseBuild() {
+    return getProjVersion().contains("SNAPSHOT") == false
+}
+
+def getReleaseRepositoryUrl() {
+    if (!project.hasProperty('maven.release')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.release=http://release.com'")
+    }
+    return property('maven.release')
+}
+
+def getSnapshotRepositoryUrl() {
+    if (!project.hasProperty('maven.snapshot')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.snapshot=http://snapshot.com'")
+    }
+    return property('maven.snapshot')
+}
+
+def getRepositoryUsername() {
+    if (!project.hasProperty('maven.username')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.username=wahaha'")
+    }
+    return property('maven.username')
+}
+
+def getRepositoryPassword() {
+    if (!project.hasProperty('maven.password')) {
+        throw new NullPointerException("Please Insert Code In root gradle.properties, Like This 'maven.password=hahahaha'")
+    }
+    return property('maven.password')
+}
+
+def getProjDescription(){
+    return project.ext.has("description")?project.ext.description:'A Library For java-library.'
+}
+def getProjUrl(){
+    return project.ext.has("url")?project.ext.url:'https://github.com/szhittech/java-library'
+}
+def getProjConnection(){
+    return project.ext.has("connection")?project.ext.connection:'https://github.com/szhittech'
+}
+def getProjAuthorId(){
+    return project.ext.has("authId")?project.ext.authId:'uuxia'
+}
+def getProjAuthorName(){
+    return project.ext.has("authName")?project.ext.authName:'xiaxiaoli'
+}
+def getProjAuthorEmail(){
+    return project.ext.has("authEmail")?project.ext.authEmail:'xiaoli.xia@clife.cn'
+}
+
+def configurePom(pom) {
+    pom.name = getProjName()
+    pom.packaging = 'aar'
+    pom.description = getProjDescription()
+    pom.url = getProjUrl()
+
+    pom.scm {
+        url = getProjUrl()
+        connection = getProjDescription()
+        developerConnection = getProjConnection()
+    }
+
+    pom.licenses {
+        license {
+            name = getProjName()
+            url = getProjUrl()
+            distribution = getProjDescription()
+        }
+    }
+
+    pom.developers {
+        developer {
+            id = getProjAuthorId()
+            name = getProjAuthorName()
+        }
+    }
+}
+
+afterEvaluate { project ->
+    publishing {
+        repositories {
+            maven {
+                def releasesRepoUrl = getReleaseRepositoryUrl()
+                def snapshotsRepoUrl = getSnapshotRepositoryUrl()
+                url = isReleaseBuild() ? releasesRepoUrl : snapshotsRepoUrl
+
+                credentials(PasswordCredentials) {
+                    username = getRepositoryUsername()
+                    password = getRepositoryPassword()
+                }
+            }
+        }
+    }
+
+    if (project.getPlugins().hasPlugin('com.android.application') ||
+            project.getPlugins().hasPlugin('com.android.library')) {
+
+
+//        android.libraryVariants.findAll { variant -> variant.name == 'Release' } each { variant ->
+//            task("generate${variant.name}Javadoc", type: Javadoc) {
+//                description "Generates Javadoc for $variant.name."
+//                source = variant.javaCompile.source
+//                ext.androidJar = "${android.plugin.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+//                classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
+//            }
+//
+//            task("bundle${variant.name}Javadoc", type: Zip) {
+//                description "Bundles Javadoc into zip for $variant.name."
+//                classifier = "javadoc"
+//                from tasks["generate${variant.name}Javadoc"]
+//            }
+//        }
+
+        tasks.withType(Javadoc) {
+//            failOnError false
+            options.addStringOption('Xdoclint:none', '-quiet')
+            options.addStringOption('encoding', 'UTF-8')
+            options.addStringOption('charSet', 'UTF-8')
+        }
+
+        task androidJavadocs(type: Javadoc) {
+//            enabled = false
+//            failOnError false
+//            title = "AAAAA ${project.version} API"
+//            description "Generates Javadoc"
+//            source = android.sourceSets.main.java.srcDirs
+//            classpath += files(android.bootClasspath)
+//
+//            android.libraryVariants.all { variant ->
+//                if (variant.name == 'release') {
+//                    owner.classpath += variant.javaCompileProvider.get().classpath
+//                }
+//            }
+//
+//            exclude '**/R.html', '**/R.*.html', '**/index.html', '**/*.kt'
+//
+//            options {
+//                windowTitle("AAAAAAAAAA ${project.version} Reference")
+//                locale = 'en_US'
+//                encoding = 'UTF-8'
+//                charSet = 'UTF-8'
+//                links("http://docs.oracle.com/javase/7/docs/api/")
+//                linksOffline("http://d.android.com/reference", "${android.sdkDirectory}/docs/reference")
+//                setMemberLevel(JavadocMemberLevel.PUBLIC)
+//            }
+
+            failOnError false
+//            source = android.sourceSets.main.java.source
+//            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//            excludes = ['**/*.kt']
+
+//            android.libraryVariants.all { variant ->
+//                if (variant.name == 'release') {
+//                    task docs(type: Javadoc) {
+//                        println 'docs task'
+//                        source = variant.javaCompiler.source
+//                        classpath += files(((Object) android.bootClasspath.join(File.pathSeparator)))
+//                        classpath += files(variant.javaCompiler.classpath.files)
+//                    }
+//                }
+//            }
+
+//            source = android.sourceSets.main.java.srcDirs
+//            // this is new
+//            android.libraryVariants.all { variant ->
+//                if (variant.name == 'release') {
+//                    owner.classpath += variant.javaCompiler.classpath
+//                }
+//            }
+//            // end of new
+//            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+
+            source = android.sourceSets.main.java.srcDirs
+            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+            android.libraryVariants.all { variant ->
+                if (variant.name == 'release') {
+                    owner.classpath += variant.javaCompileProvider.get().classpath
+                }
+            }
+            exclude '**/R.html', '**/R.*.html', '**/index.html'
+
+
+            enabled false
+        }
+
+
+        task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+            classifier = 'javadoc'
+            from androidJavadocs.destinationDir
+        }
+
+        task androidSourcesJar(type: Jar) {
+            classifier = 'sources'
+            from android.sourceSets.main.java.source
+        }
+    }
+
+    if (JavaVersion.current().isJava8Compatible()) {
+        allprojects {
+            tasks.withType(Javadoc) {
+                options.addStringOption('Xdoclint:none', '-quiet')
+            }
+        }
+    }
+
+    if (JavaVersion.current().isJava9Compatible()) {
+        allprojects {
+            tasks.withType(Javadoc) {
+                options.addBooleanOption('html5', true)
+            }
+        }
+    }
+
+    artifacts {
+        if (project.getPlugins().hasPlugin('com.android.application') ||
+                project.getPlugins().hasPlugin('com.android.library')) {
+            archives androidSourcesJar
+            archives androidJavadocsJar
+        }
+    }
+
+    android.libraryVariants.all { variant ->
+        tasks.androidJavadocs.doFirst {
+            classpath += files(variant.javaCompileProvider.get().classpath.files.join(File.pathSeparator))
+        }
+    }
+
+    publishing.publications.all { publication ->
+        publication.groupId = getProjGroupId()
+        publication.version = getProjName()
+
+        publication.artifact androidSourcesJar
+        publication.artifact androidJavadocsJar
+
+        configurePom(publication.pom)
+    }
+
+    signing {
+        publishing.publications.all { publication ->
+            sign publication
+        }
+    }
+}

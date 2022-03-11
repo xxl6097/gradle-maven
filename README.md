@@ -1,5 +1,7 @@
 ## `Gradle`发布`MavenCenter`和`Nexus`私服插件
 
+https://docs.gradle.org/current/userguide/publishing_maven.html
+
 基于`Java`语言与`Gradle Api`开发的`Gradle Plugin`，本`Gradle插件`可以让你的`library`发布到`MavenCenter`和自己的`nexus`私服变得非常容易。
 内置了阿里云`Maven`中央仓库，其中配置了`aliyun`代理的`central`、`jcenter`、`google`。
 

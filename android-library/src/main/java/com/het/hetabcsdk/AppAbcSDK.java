@@ -19,9 +19,7 @@ public class AppAbcSDK {
     }
 
     public static Intent getAppOpenIntentByPackageName(Context context, String packageName){
-        //Activity完整名
         String mainAct = null;
-        //根据包名寻找
         PackageManager pkgMag = context.getPackageManager();
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
