@@ -13,6 +13,7 @@ import org.gradle.api.XmlProvider;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.ExcludeRule;
 import org.gradle.api.artifacts.ModuleDependency;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.DefaultDomainObjectSet;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.publish.maven.MavenPom;
@@ -33,6 +34,8 @@ import io.github.szhittech.component.base.BaseComponent;
 import io.github.szhittech.extension.MConfig;
 
 public class AndroidComponent extends BaseComponent {
+
+    private FileCollection classpath = null;
 
     private LibraryExtension android = (LibraryExtension)project.getExtensions().getByName("android");
 
@@ -64,10 +67,12 @@ public class AndroidComponent extends BaseComponent {
         AndroidSourceSet sourceSet =  android.getSourceSets().getByName("main");//
         Set<File> source = sourceSet.getJava().getSrcDirs();
         androidJavaDocs.source(source);
+        classpath = androidJavaDocs.getClasspath();
         android.getBootClasspath().forEach(new Consumer<File>() {
             @Override
             public void accept(File file) {
-                androidJavaDocs.getClasspath().plus(project.files(file));
+                classpath = classpath.plus(project.files(file));
+                androidJavaDocs.setClasspath(classpath);
             }
         });
 
@@ -76,24 +81,17 @@ public class AndroidComponent extends BaseComponent {
             public void execute(LibraryVariant libraryVariant) {
                 LibraryVariantImpl variant = (LibraryVariantImpl) libraryVariant;
                 if (variant.getName().equalsIgnoreCase("release")) {
-                    androidJavaDocs.getClasspath().plus(variant.getJavaCompileProvider().get().getClasspath());
-                    androidJavaDocs.getClasspath().forEach(new Consumer<File>() {
-                        @Override
-                        public void accept(File file) {
-                            Logging.getLogger(getClass()).error("1---->{}",file.getAbsolutePath());
-                        }
-                    });
+                    FileCollection collection = variant.getJavaCompileProvider().get().getClasspath();
+                    classpath = classpath.plus(collection);
+                    //Logging.getLogger(getClass()).error("1---->{}", classpath.getFiles());
+                    androidJavaDocs.setClasspath(classpath);
                 }
-            }
-        });
-        androidJavaDocs.exclude("**/R.html", "**/R.*.html", "**/index.html");
 
-        androidJavaDocs.getClasspath().forEach(new Consumer<File>() {
-            @Override
-            public void accept(File file) {
-                Logging.getLogger(getClass()).error("2---->{}",file.getAbsolutePath());
             }
         });
+        //androidJavaDocs.exclude("**/R.html", "**/R.*.html", "**/index.html");
+
+        //Logging.getLogger(getClass()).error("2---->{}", classpath.getFiles());
 
         Jar androidJavaDocsJar = project.getTasks().create("androidJavaDocsJar", Jar.class);
         androidJavaDocsJar.setClassifier("javadoc");

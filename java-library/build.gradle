@@ -1,0 +1,41 @@
+apply plugin: 'java'
+
+version 'unspecified'
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'com.java.test.Main'
+        )
+    }
+}
+//mainClassName = 'com.java.test.Main'
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+ext {
+    groupId = "io.github.szhittech"
+    name = "java-library"
+//    version = "0.0.1-SNAPSHOT"
+    version = "0.0.6"
+    description = "A Library For java-library."
+    url = "https://github.com/szhittech/java-library"
+}
+
+//apply from: '../java-publish.gradle'
+apply plugin: 'gradle.maven'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        //classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+        classpath "io.github.szhittech:gradle-maven:0.0.6"
+    }
+}

@@ -44,24 +44,24 @@ ext {
 //    javaDocEnabled = false
     groupId = "io.github.szhittech"
     name = "android-library"
-    version = "0.0.1-SNAPSHOT"
+    version = "0.0.2-SNAPSHOT"
 //    version = "1.0.3"
     description = "A Library For android-library."
     url = "https://github.com/szhittech/android-library"
 }
 //apply from: '../gradle-publish.gradle'
 //apply from: '../android-publish.gradle'
-//apply plugin: 'gradle.maven'
-//buildscript {
-//    repositories {
-//        jcenter()
-//        maven {
-//            url uri('../repo')
-//        }
-//
-//    }
-//    dependencies {
-//        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
-//    }
-//}
+apply plugin: 'gradle.maven'
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url uri('../repo')
+        }
+
+    }
+    dependencies {
+        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+    }
+}
 

@@ -218,26 +218,14 @@ afterEvaluate { project ->
 
             source = android.sourceSets.main.java.srcDirs
             classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-
             android.libraryVariants.all { variant ->
                 if (variant.name == 'release') {
                     owner.classpath += variant.javaCompileProvider.get().classpath
-                    owner.classpath.forEach(new Consumer<File>() {
-                        @Override
-                        void accept(File file) {
-                            println('1--->' + file.getAbsolutePath())
-                        }
-                    })
+                    println('1--->' + owner.classpath.files)
+                    println('2--->' + classpath.files)
                 }
             }
             exclude '**/R.html', '**/R.*.html', '**/index.html'
-
-            classpath.forEach(new Consumer<File>() {
-                @Override
-                void accept(File file) {
-                    println('--->' + file.getAbsolutePath())
-                }
-            })
 
 
             //enabled false
