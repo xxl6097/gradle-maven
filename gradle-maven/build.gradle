@@ -35,16 +35,16 @@ task createReleasePropertiesFile(type:Exec) {
 }
 
 
-//apply from: 'local.gradle'//本地测试
-apply plugin: 'gradle.maven'
-buildscript {
-  repositories {
-    jcenter()
-    maven {
-      url uri('../repo')
-    }
-  }
-  dependencies {
-    classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
-  }
-}
+apply from: 'local.gradle'//本地测试
+//apply plugin: 'gradle.maven'
+//buildscript {
+//  repositories {
+//    jcenter()
+//    maven {
+//      url uri('../repo')
+//    }
+//  }
+//  dependencies {
+//    classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+//  }
+//}
