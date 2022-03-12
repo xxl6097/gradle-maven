@@ -3,6 +3,7 @@ package io.github.szhittech.component.base;
 
 import io.github.szhittech.extension.MConfig;
 import org.gradle.api.Action;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.publish.maven.*;
 import org.gradle.api.tasks.TaskCollection;
@@ -92,6 +93,51 @@ public abstract class BaseComponent {
         });
 
         return null;
+    }
+
+    protected void javaVersionCompatible(){
+        if (JavaVersion.current().isJava8Compatible()) {
+            project.allprojects(new Action<Project>() {
+                @Override
+                public void execute(Project project) {
+                    TaskCollection<Javadoc> javadoc = project.getTasks().withType(Javadoc.class);
+                    javadoc.forEach(new Consumer<Javadoc>() {
+                        @Override
+                        public void accept(Javadoc javadoc) {
+                            javadoc.options(new Action<MinimalJavadocOptions>() {
+                                @Override
+                                public void execute(MinimalJavadocOptions minimalJavadocOptions) {
+                                    StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) minimalJavadocOptions;
+                                    options.addStringOption("Xdoclint:none", "-quiet");
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        if (JavaVersion.current().isJava9Compatible()) {
+            project.allprojects(new Action<Project>() {
+                @Override
+                public void execute(Project project) {
+                    TaskCollection<Javadoc> javadoc = project.getTasks().withType(Javadoc.class);
+                    javadoc.forEach(new Consumer<Javadoc>() {
+                        @Override
+                        public void accept(Javadoc javadoc) {
+                            javadoc.options(new Action<MinimalJavadocOptions>() {
+                                @Override
+                                public void execute(MinimalJavadocOptions minimalJavadocOptions) {
+                                    StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) minimalJavadocOptions;
+                                    options.addBooleanOption("html5", true);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
     }
 
 }

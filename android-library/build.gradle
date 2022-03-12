@@ -51,17 +51,17 @@ ext {
 }
 //apply from: '../gradle-publish.gradle'
 //apply from: '../android-publish.gradle'
-apply plugin: 'gradle.maven'
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            url uri('../repo')
-        }
-
-    }
-    dependencies {
-        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
-    }
-}
+//apply plugin: 'gradle.maven'
+//buildscript {
+//    repositories {
+//        jcenter()
+//        maven {
+//            url uri('../repo')
+//        }
+//
+//    }
+//    dependencies {
+//        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+//    }
+//}
 
