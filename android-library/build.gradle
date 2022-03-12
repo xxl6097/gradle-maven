@@ -54,14 +54,16 @@ ext {
 apply plugin: 'gradle.maven'
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
         maven {
             url uri('../repo')
         }
 
     }
     dependencies {
-        classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+        //classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
+        classpath "io.github.szhittech:gradle-maven:0.0.6"
     }
 }
+
 

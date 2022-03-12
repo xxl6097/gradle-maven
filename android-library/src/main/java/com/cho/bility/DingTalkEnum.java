@@ -1,0 +1,5 @@
+package com.cho.bility;
+
+public enum DingTalkEnum {
+    LOGIN,WORKBAR,KAOQINDAKA,CANDAKA,DAKASUCESS,MINE,SETTING,LOGINOUT,CONFIRE
+}
