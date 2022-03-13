@@ -5,7 +5,7 @@ function todir() {
 
 function pull() {
   todir
-  echo "git pull"
+  echo "git pull."
   git pull
 }
 
