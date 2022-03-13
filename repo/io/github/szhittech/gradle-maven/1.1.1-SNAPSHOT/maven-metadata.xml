@@ -2,23 +2,23 @@
 <metadata modelVersion="1.1.0">
   <groupId>io.github.szhittech</groupId>
   <artifactId>gradle-maven</artifactId>
-  <version>0.0.0-SNAPSHOT</version>
+  <version>1.1.1-SNAPSHOT</version>
   <versioning>
     <snapshot>
-      <timestamp>20220312.090449</timestamp>
+      <timestamp>20220313.102552</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
-    <lastUpdated>20220312090449</lastUpdated>
+    <lastUpdated>20220313102552</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>0.0.0-20220312.090449-1</value>
-        <updated>20220312090449</updated>
+        <value>1.1.1-20220313.102552-1</value>
+        <updated>20220313102552</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>0.0.0-20220312.090449-1</value>
-        <updated>20220312090449</updated>
+        <value>1.1.1-20220313.102552-1</value>
+        <updated>20220313102552</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>

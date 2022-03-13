@@ -123,6 +123,11 @@ def configurePom(pom) {
     }
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+
 afterEvaluate { project ->
     publishing {
         repositories {

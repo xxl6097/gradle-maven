@@ -19,11 +19,14 @@ import java.util.function.Consumer;
 public abstract class BaseComponent {
     protected Project project;
 
+    protected MConfig config;
+
     public BaseComponent(Project project) {
         this.project = project;
     }
 
     public void buildComponent(MavenPublication mavenPublication, MConfig config){
+        this.config = config;
         fromComponent(mavenPublication);
 
         if (config.sourceJarEnabled) {

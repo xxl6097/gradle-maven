@@ -12,7 +12,7 @@ public class MConfig {
 
     public boolean sourceJarEnabled = true;
     public boolean signEnabled = false;
-    public boolean javaDocEnabled = true;
+    public boolean javaDocEnabled = false;
 
 
     public String version = null;
@@ -74,9 +74,9 @@ public class MConfig {
             throw new MissingPropertyException("Please insert code like this 'ext {  }' in your library/build.gradle");
         if (obj instanceof DefaultExtraPropertiesExtension){
             DefaultExtraPropertiesExtension extension = (DefaultExtraPropertiesExtension) obj;
-            sourceJarEnabled = getBoolValue(extension,"sourceJarEnabled");
-            signEnabled = getBoolValue(extension,"signEnabled");
-            javaDocEnabled = getBoolValue(extension,"javaDocEnabled");
+            sourceJarEnabled = getBoolValue(extension,"sourceJarEnabled",sourceJarEnabled);
+            signEnabled = getBoolValue(extension,"signEnabled",signEnabled);
+            javaDocEnabled = getBoolValue(extension,"javaDocEnabled",javaDocEnabled);
 
             version = getStringValue(extension,"version");
             name = getStringValue(extension,"name");
@@ -93,11 +93,11 @@ public class MConfig {
         checkArgs();
     }
 
-    private boolean getBoolValue(DefaultExtraPropertiesExtension extension,String key){
+    private boolean getBoolValue(DefaultExtraPropertiesExtension extension,String key,boolean defaultValue){
         if (extension == null || key == null)
-            return true;
+            return defaultValue;
         if (!extension.has(key))
-            return true;
+            return defaultValue;
         return (boolean) extension.getProperty(key);
     }
 
