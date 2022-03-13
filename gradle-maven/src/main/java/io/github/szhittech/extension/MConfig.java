@@ -12,7 +12,7 @@ public class MConfig {
 
     public boolean sourceJarEnabled = true;
     public boolean signEnabled = false;
-    public boolean javaDocEnabled = false;
+    public boolean javaDocEnabled = true;
 
 
     public String version = null;
