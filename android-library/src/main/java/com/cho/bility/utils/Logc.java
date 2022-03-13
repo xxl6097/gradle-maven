@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-
+import com.het.hetabcsdk.BuildConfig;
 
 
 import java.io.BufferedWriter;
@@ -62,7 +62,7 @@ public class Logc {
     static {
 //        android.util.Log
         String os = System.getProperty("os.name");
-        boolean isdebug = true;//BuildConfig.DEBUG;
+        boolean isdebug = BuildConfig.DEBUG;
         System.out.println("uu_clife current os System is " + os + ",isdebug:"+isdebug);
         if (os.toLowerCase().contains("win") || os.toLowerCase().contains("mac")) {
             isAndroid = false;

@@ -165,6 +165,7 @@ afterEvaluate { project ->
         }
 
         task androidJavadocs(type: Javadoc) {
+            //failOnError false
 //            enabled = false
 //            failOnError false
 //            title = "AAAAA ${project.version} API"
