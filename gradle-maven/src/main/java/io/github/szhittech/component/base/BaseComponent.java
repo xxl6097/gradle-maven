@@ -29,6 +29,8 @@ public abstract class BaseComponent {
         this.config = config;
         fromComponent(mavenPublication);
 
+        addOptions();
+
         if (config.sourceJarEnabled) {
             mavenPublication.artifact(sourcesJar());
         }
@@ -141,6 +143,24 @@ public abstract class BaseComponent {
             });
         }
 
+    }
+
+    protected void addOptions(){
+        project.getTasks().withType(Javadoc.class, new Action<Javadoc>() {
+            @Override
+            public void execute(Javadoc javadoc) {
+                javadoc.setFailOnError(false);
+                javadoc.options(new Action<MinimalJavadocOptions>() {
+                    @Override
+                    public void execute(MinimalJavadocOptions minimalJavadocOptions) {
+                        StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) minimalJavadocOptions;
+                        options.addStringOption("Xdoclint:none", "-quiet");
+                        options.addStringOption("encoding", "UTF-8");
+                        options.addStringOption("charSet", "UTF-8");
+                    }
+                });
+            }
+        });
     }
 
 }

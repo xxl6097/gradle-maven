@@ -1,14 +1,11 @@
 package io.github.szhittech.component;
 
-import io.github.szhittech.component.base.BaseComponent;
-import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.bundling.Jar;
-import org.gradle.api.tasks.javadoc.Javadoc;
-import org.gradle.external.javadoc.MinimalJavadocOptions;
-import org.gradle.external.javadoc.StandardJavadocDocletOptions;
+
+import io.github.szhittech.component.base.BaseComponent;
 
 public class JavaComponent extends BaseComponent {
     public JavaComponent(Project project) {
@@ -18,7 +15,6 @@ public class JavaComponent extends BaseComponent {
     @Override
     protected void fromComponent(MavenPublication mavenPublication) {
         mavenPublication.from(project.getComponents().getByName("java"));
-        addOptions();
     }
 
     @Override
@@ -38,20 +34,4 @@ public class JavaComponent extends BaseComponent {
         return sourcesJar;
     }
 
-    private void addOptions(){
-        project.getTasks().withType(Javadoc.class, new Action<Javadoc>() {
-            @Override
-            public void execute(Javadoc javadoc) {
-                javadoc.options(new Action<MinimalJavadocOptions>() {
-                    @Override
-                    public void execute(MinimalJavadocOptions minimalJavadocOptions) {
-                        StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) minimalJavadocOptions;
-                        options.addStringOption("Xdoclint:none", "-quiet");
-                        options.addStringOption("encoding", "UTF-8");
-                        options.addStringOption("charSet", "UTF-8");
-                    }
-                });
-            }
-        });
-    }
 }

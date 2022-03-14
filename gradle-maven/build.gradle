@@ -34,17 +34,17 @@ task createReleasePropertiesFile(type:Exec) {
   file.write(fileContent)
 }
 
-apply from: '../java-publish.gradle'
+//apply from: '../java-publish.gradle'
 //apply from: 'local.gradle'//本地测试
-//apply plugin: 'gradle.maven'
-//buildscript {
-//  repositories {
-//    jcenter()
-//    maven {
-//      url uri('../repo')
-//    }
-//  }
-//  dependencies {
-//    classpath "io.github.szhittech:gradle-maven:1.1.1-SNAPSHOT"
-//  }
-//}
+apply plugin: 'gradle.maven'
+buildscript {
+  repositories {
+    jcenter()
+    maven {
+      url uri('../repo')
+    }
+  }
+  dependencies {
+    classpath "io.github.szhittech:gradle-maven:1.1.1-SNAPSHOT"
+  }
+}

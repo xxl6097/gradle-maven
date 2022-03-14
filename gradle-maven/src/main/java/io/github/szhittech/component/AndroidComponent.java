@@ -3,9 +3,8 @@ package io.github.szhittech.component;
 import com.android.build.gradle.LibraryExtension;
 import com.android.build.gradle.api.AndroidSourceSet;
 import com.android.build.gradle.api.LibraryVariant;
-
 import com.android.build.gradle.internal.api.LibraryVariantImpl;
-import groovy.lang.Closure;
+
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -14,18 +13,14 @@ import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.ExcludeRule;
 import org.gradle.api.artifacts.ModuleDependency;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.internal.DefaultDomainObjectSet;
-import org.gradle.api.logging.Logging;
 import org.gradle.api.publish.maven.MavenPom;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.javadoc.Javadoc;
-import org.gradle.external.javadoc.JavadocMemberLevel;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
 import java.io.File;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -199,23 +194,6 @@ public class AndroidComponent extends BaseComponent {
 //                options.setMemberLevel(JavadocMemberLevel.PUBLIC);
                 options.charSet("UTF-8");
                 options.docEncoding("UTF-8");
-            }
-        });
-    }
-
-    private void addOptions(){
-        project.getTasks().withType(Javadoc.class, new Action<Javadoc>() {
-            @Override
-            public void execute(Javadoc javadoc) {
-                javadoc.options(new Action<MinimalJavadocOptions>() {
-                    @Override
-                    public void execute(MinimalJavadocOptions minimalJavadocOptions) {
-                        StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) minimalJavadocOptions;
-                        options.addStringOption("Xdoclint:none", "-quiet");
-                        options.addStringOption("encoding", "UTF-8");
-                        options.addStringOption("charSet", "UTF-8");
-                    }
-                });
             }
         });
     }

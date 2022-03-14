@@ -44,8 +44,8 @@ ext {
 //    javaDocEnabled = false
     groupId = "io.github.szhittech"
     name = "android-library"
-    version = "0.0.2-SNAPSHOT"
-//    version = "1.0.3"
+//    version = "0.0.2-SNAPSHOT"
+    version = "1.0.3"
     description = "A Library For android-library."
     url = "https://github.com/szhittech/android-library"
 }
@@ -61,8 +61,8 @@ buildscript {
 
     }
     dependencies {
-        //classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
-        classpath "io.github.szhittech:gradle-maven:0.0.7"
+        classpath "io.github.szhittech:gradle-maven:1.1.1-SNAPSHOT"
+//        classpath "io.github.szhittech:gradle-maven:0.0.7"
     }
 }
 

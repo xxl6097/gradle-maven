@@ -28,14 +28,17 @@ ext {
     url = "https://github.com/szhittech/java-library"
 }
 
-//apply from: '../java-publish.gradle'
-apply plugin: 'gradle.maven'
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        //classpath "io.github.szhittech:gradle-maven:0.0.0-SNAPSHOT"
-        classpath "io.github.szhittech:gradle-maven:0.0.6"
-    }
-}
+apply from: '../java-publish.gradle'
+//apply plugin: 'gradle.maven'
+//buildscript {
+//    repositories {
+//        mavenCentral()
+//        maven {
+//            url uri('../repo')
+//        }
+//    }
+//    dependencies {
+//        classpath "io.github.szhittech:gradle-maven:1.1.1-SNAPSHOT"
+////        classpath "io.github.szhittech:gradle-maven:0.0.6"
+//    }
+//}
