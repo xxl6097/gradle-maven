@@ -13,7 +13,7 @@ https://docs.gradle.org/current/userguide/publishing_maven.html
 ### 一、最新版本
 
 ```
-classpath 'io.github.szhittech:gradle-maven:0.0.6
+classpath 'io.github.szhittech:gradle-maven:0.0.7
 ```
 
 ### 二、功能简介
@@ -28,7 +28,7 @@ classpath 'io.github.szhittech:gradle-maven:0.0.6
 #### 1. 在根目录`build.gradle`中新增如下代码
 
 ```
-classpath 'io.github.szhittech:gradle-maven:0.0.6'
+classpath 'io.github.szhittech:gradle-maven:0.0.7'
 
 ```
 
