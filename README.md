@@ -9,7 +9,7 @@
 <!--more-->
 
 
-### 一、最新版本
+### 一、最新版本(根目录build.gradle)
 
 ```
 classpath 'io.github.szhittech:gradle-maven:0.0.7
