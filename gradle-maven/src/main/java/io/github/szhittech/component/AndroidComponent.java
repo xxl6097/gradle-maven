@@ -50,7 +50,10 @@ public class AndroidComponent extends BaseComponent {
         if (project.getTasks().findByName("bundleRelease") != null) {
             bundleReleaseAar = project.getTasks().getByName("bundleRelease");
         }
-        mavenPublication.artifact(bundleReleaseAar);
+
+        if (bundleReleaseAar != null) {
+            mavenPublication.artifact(bundleReleaseAar);
+        }
 
         addOptions();
     }

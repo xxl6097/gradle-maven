@@ -1,6 +1,6 @@
-include ':java-library'
+//include ':java-library'
 include ':android-library'
-//include ':gradle-maven'
+include ':gradle-maven'
 //include ':secret'
 
 

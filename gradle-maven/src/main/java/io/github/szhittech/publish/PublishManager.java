@@ -9,7 +9,6 @@ import io.github.szhittech.property.PropertyManager;
 import io.github.szhittech.repository.RepositoryEntity;
 import io.github.szhittech.task.UploadTaskManager;
 import io.github.szhittech.util.StringUtils;
-import jdk.nashorn.internal.objects.NativeUint8Array;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
