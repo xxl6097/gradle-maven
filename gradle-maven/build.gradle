@@ -18,8 +18,8 @@ configurations.all {
 ext {
   groupId = "io.github.szhittech"
   name = "gradle-maven"
-//  version = "1.1.1-SNAPSHOT"
-  version = "0.0.8"
+  version = "1.1.1-SNAPSHOT"
+//  version = "0.0.8"
   description = "A Gradle Plugin For Java、Android、Kotlin."
   url = "https://e.coding.net/clife-devops/clifepublic/gradle-maven"
   connection = "https://e.coding.net/clife-devops/clifepublic/gradle-maven.git"
